@@ -37,3 +37,5 @@ Repository searches and generated catalogs contain no TUI package, dependency pa
 DeepSeek Harness has no terminal UI package. Existing imports and `cordis.yml` rows that depend on the package fail instead of being translated. Web remains the shipped interactive surface; ACP, JSON-RPC, and one-shot CLI remain the non-Web entry points.
 
 The provider-neutral command, user-questions, approval, tool-presentation, PTY, and session-projection capabilities remain available to other hosts. Reintroducing a terminal frontend requires a named product or deployment, an explicit package boundary, a concrete interaction provider, and assembled lifecycle and transcript acceptance for that frontend.
+
+[The terminal user interface decision](../feature/2026-08-14-terminal-user-interface.md) later satisfies those conditions through a new Host-owned package and product profile. This note remains authoritative for removing the former `packages/ui/tui` implementation, not for the current application inventory.

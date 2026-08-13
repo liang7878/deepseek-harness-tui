@@ -38,4 +38,6 @@ export const coverageExemptHeavySuites: readonly CoverageExemptSuite[] = [
   { filter: 'scripts/install-lefthook.spec.ts', exclude: 'scripts/install-lefthook.spec.ts' },
   { filter: 'scripts/oxlint-contract.spec.ts', exclude: 'scripts/oxlint-contract.spec.ts' },
   { filter: 'scripts/change-scope.spec.ts', exclude: 'scripts/change-scope.spec.ts' },
+  // The TUI behavior runs in a child pseudo-terminal, outside v8 collection.
+  { filter: 'packages/bundle/tui-app/tests/pty.spec.ts', exclude: 'packages/bundle/tui-app/tests/pty.spec.ts' },
 ]

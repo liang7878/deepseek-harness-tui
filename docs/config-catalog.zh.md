@@ -2798,6 +2798,35 @@ export type ToolPresentationMode = 'native' | 'code' | 'both'
 
 来源：[`packages/core/tools/src/index.ts:654`](../packages/core/tools/src/index.ts)
 
+<a id="deepseek-aidsh-tui-app"></a>
+
+## `@deepseek-ai/dsh-tui-app`
+
+需要：`tuiStartup`
+
+```ts config-catalog
+/** Runtime configuration populated by the startup provider. */
+export interface Config extends TuiConfig {}
+
+/** Startup configuration transferred from the command-line provider. */
+export interface TuiConfig {
+  /** Persisted Session identifier to resume instead of creating one. */
+  resume?: string
+  /** Absolute or invocation-relative workspace directory. */
+  cwd: string
+  /** Initial provider/model pair. */
+  model?: string
+  /** Whether rendering stays in ordinary terminal scrollback. */
+  inline: boolean
+  /** Whether ANSI color is enabled. */
+  color: boolean
+  /** Whether Unicode status symbols are enabled. */
+  unicode: boolean
+}
+```
+
+来源：[`packages/bundle/tui-app/src/index.ts:21`](../packages/bundle/tui-app/src/index.ts)
+
 <a id="deepseek-aidsh-typert-loader"></a>
 
 ## `@deepseek-ai/dsh-typert-loader`

@@ -111,6 +111,7 @@ const processBoundTests = [
   'packages/context/time-context/tests/time-context.spec.ts',
   'packages/llm/llm-pi-ai/tests/adapter.spec.ts',
   'packages/boot/app-boot/tests/app-boot.spec.ts',
+  'packages/bundle/tui-app/tests/pty.spec.ts',
   'packages/workflow/workflow-worker-thread/tests/session.spec.ts',
 ]
 
@@ -170,6 +171,13 @@ export default defineConfig({
         'packages/*/*/src/types.ts',
         'packages/*/*/src/bin.ts',
         'packages/*/*/src/worker.ts',
+        // The Ink renderer, terminal lifecycle, transcript projection, and
+        // controller are exercised together in a real pseudo-terminal process.
+        // Vitest's v8 provider cannot collect coverage from that child process.
+        'packages/bundle/tui-app/src/index.ts',
+        'packages/bundle/tui-app/src/projection.ts',
+        'packages/bundle/tui-app/src/runtime.ts',
+        'packages/bundle/tui-app/src/ui.tsx',
         // Dynamic Host/Client composition is covered by its focused lifecycle
         // tests and assembled application checks rather than per-file coverage.
         'packages/self-modification/*/src/**/*.{ts,tsx}',

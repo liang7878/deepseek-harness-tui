@@ -37,3 +37,5 @@ Status: implemented
 DeepSeek Harness 不再提供终端 UI 包。现有 import 和依赖该包的 `cordis.yml` 条目会直接失败，不会得到兼容转换。Web 仍是已交付的交互界面；ACP、JSON-RPC 与一次性 CLI 仍是 Web 之外的入口。
 
 提供方无关的命令、用户交互、审批、工具呈现、PTY 与会话投影能力仍可供其他宿主使用。重新引入终端前端时，必须为其提供具名产品或部署、显式包边界、具体交互提供方，以及组装后的生命周期与 transcript（文本记录）验收。
+
+[终端用户界面决策](../feature/2026-08-14-terminal-user-interface.md)随后通过新的 Host 所有包与产品 profile 满足了这些条件。本说明仍是移除原 `packages/ui/tui` 实现的权威依据，而不是当前应用清单的依据。
