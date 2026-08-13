@@ -20,6 +20,7 @@ export interface TuiStartupValues {
   resume?: string
   cwd: string
   model?: string
+  theme?: string
   inline: boolean
   color: boolean
   unicode: boolean
@@ -29,6 +30,7 @@ interface TuiOptions {
   resume?: string
   cwd?: string
   model?: string
+  theme?: string
   inline?: boolean
   color?: boolean
   unicode?: boolean
@@ -43,6 +45,7 @@ function tuiCommand(): Command {
     .option('-r, --resume <session>', 'resume a persisted session')
     .option('-C, --cwd <path>', 'working directory for a new session')
     .option('-m, --model <provider/model>', 'model for a new session')
+    .option('-t, --theme <id>', 'built-in or user-defined terminal theme')
     .option('--inline', 'render in terminal scrollback instead of the alternate screen')
     .option('--no-color', 'disable ANSI colors')
     .option('--no-unicode', 'use ASCII status symbols')
@@ -50,7 +53,7 @@ function tuiCommand(): Command {
 Examples:
   dsh tui
   dsh tui --resume session-abc
-  dsh tui --cwd ../project --model deepseek-official/deepseek-v4-flash
+  dsh tui --cwd ../project --model deepseek-official/deepseek-v4-flash --theme sakura
 `)
 }
 
@@ -63,10 +66,14 @@ export function apply(ctx: Context): void {
     if (options.model !== undefined && !/^[^/\s]+\/[^/\s]+$/u.test(options.model)) {
       program.error(`error: --model must be provider/model, got ${JSON.stringify(options.model)}`)
     }
+    if (options.theme !== undefined && !/^[a-z][a-z0-9-]*$/u.test(options.theme)) {
+      program.error(`error: --theme must be a lowercase id, got ${JSON.stringify(options.theme)}`)
+    }
     ctx.provide(TUI_STARTUP_SERVICE, {
       ...options.resume === undefined ? {} : { resume: options.resume },
       cwd: resolve(options.cwd ?? process.cwd()),
       ...options.model === undefined ? {} : { model: options.model },
+      ...options.theme === undefined ? {} : { theme: options.theme },
       inline: options.inline ?? false,
       color: options.color !== false && process.env.NO_COLOR === undefined,
       unicode: options.unicode !== false,

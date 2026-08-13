@@ -20,6 +20,8 @@ bundle 使用与仓库 React 18 版本线兼容的 Ink。Ink 负责终端渲染�
 
 profile 支持 macOS、Linux 和 Windows，遵循 `NO_COLOR`，所有颜色状态都保留文字标签，适配窄终端，并在每条退出路径恢复终端状态。非交互调用会给出修正方法，而不是启动一个不可见的 agent。
 
+[终端主题系统](2026-08-14-terminal-theme-system.md)通过经过校验的用户 settings 扩展展示，同时保留这些无颜色、窄终端和活动 transcript 保证。
+
 ## Ownership
 
 `dsh-agent`、`dsh-session` 及各工具继续拥有运行时与持久事实。`dsh-tui-app` 只拥有终端呈现、输入编辑、本地导航命令和一个当前顶层 Agent handle。Harness 斜杠命令通过 `ctx.commands` 分派；本地导航命令不会进入 Session log。

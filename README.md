@@ -47,6 +47,7 @@ The current directory becomes the workspace. Use another directory or model expl
 pnpm dsh tui --cwd ../your-project
 pnpm dsh tui --model deepseek-official/deepseek-v4-flash
 pnpm dsh tui --resume <session-id>
+pnpm dsh tui --theme sakura
 ```
 
 ## Volcengine Ark
@@ -72,6 +73,14 @@ pnpm dsh tui --model volcengine/your-endpoint-or-model-id
 
 Secrets remain in the environment or the Harness credential store; settings contain only credential references.
 
+## Themes
+
+![Switching between the Sakura Byte and Classic Cyan terminal themes](assets/tui-themes.gif)
+
+Press `Ctrl+T` or run `/theme` to switch among **Classic Cyan**, **Sakura Byte**, **Deep Ocean**, and **Ember Forge**. The selector persists your choice in `~/.dsh/settings.yaml`; `--theme <id>` applies a one-run override. Sakura Byte uses an original anime-inspired welcome canvas designed for this project, not an existing character or franchise.
+
+Custom themes load from the same settings file with validated semantic colors, welcome copy, and optional text art. See the [theme configuration contract](packages/bundle/tui-app/README.md#themes) for a complete example. Decorative art appears only on an empty, wide, color-and-Unicode terminal; narrow panes, `NO_COLOR`, `--no-unicode`, and active transcripts retain the compact production layout.
+
 ## Keyboard workflow
 
 | Key | Action |
@@ -81,12 +90,13 @@ Secrets remain in the environment or the Harness credential store; settings cont
 | `Ctrl+C` | Cancel active work; exit while idle. |
 | `Ctrl+O` | Browse persisted sessions. |
 | `Ctrl+L` | Select a provider and model. |
+| `Ctrl+T` | Select and persist a terminal theme. |
 | `Ctrl+P` | Browse commands. |
 | `PageUp` / `PageDown` | Page the transcript. |
 | `Ctrl+E` | Return to the live tail. |
 | `Esc` | Close or cancel the active interaction. |
 
-Local commands include `/new`, `/resume`, `/sessions`, `/model`, `/models`, `/commands`, `/help`, and `/quit`. Plugin-contributed slash commands appear in the same command palette.
+Local commands include `/new`, `/resume`, `/sessions`, `/model`, `/models`, `/theme`, `/themes`, `/commands`, `/help`, and `/quit`. Plugin-contributed slash commands appear in the same command palette.
 
 ## Architecture
 

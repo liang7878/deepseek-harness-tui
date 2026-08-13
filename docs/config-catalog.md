@@ -2800,7 +2800,7 @@ Source: [`packages/core/tools/src/index.ts:654`](../packages/core/tools/src/inde
 
 ## `@deepseek-ai/dsh-tui-app`
 
-Requires: `tuiStartup`
+Requires: `tuiStartup` · `settings`
 
 ```ts config-catalog
 /** Runtime configuration populated by the startup provider. */
@@ -2814,6 +2814,8 @@ export interface TuiConfig {
   cwd: string
   /** Initial provider/model pair. */
   model?: string
+  /** Initial built-in or custom terminal theme. */
+  theme?: string
   /** Whether rendering stays in ordinary terminal scrollback. */
   inline: boolean
   /** Whether ANSI color is enabled. */

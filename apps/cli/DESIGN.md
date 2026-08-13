@@ -2,7 +2,7 @@
 
 ## Intent
 
-A developer runs the TUI inside a local terminal, SSH session, or multiplexer while reading code and supervising long-running agent work. The terminal theme and ambient light are unknown, so the interface inherits the terminal background and uses a restrained semantic ANSI palette rather than imposing a dark or light canvas.
+A developer runs the TUI inside a local terminal, SSH session, or multiplexer while reading code and supervising long-running agent work. The terminal background and ambient light are unknown, so every theme inherits the background and remaps a restrained semantic ANSI palette rather than imposing a dark or light canvas.
 
 ## Layout
 
@@ -15,11 +15,13 @@ The default view has four stable regions:
 
 Selectors and human decisions replace the transcript region temporarily instead of opening nested boxes. The header and status line remain visible so the user retains location and escape instructions.
 
-At widths below 80 columns, the header collapses to model and state, tool details abbreviate paths, and secondary shortcut hints disappear. Below 50 columns, the interface keeps only the transcript, modal prompt, and composer. Height limits reduce the retained transcript window rather than hiding the active prompt.
+At widths below 84 columns or transcript heights below 14 rows, decorative welcome art disappears. Below 80 columns, the header collapses to model and state, tool details abbreviate paths, and secondary shortcut hints disappear. Below 50 columns, the interface keeps only the transcript, modal prompt, and composer. Height limits reduce the retained transcript window rather than hiding the active prompt.
 
 ## Visual Language
 
-The terminal background is never painted. Primary text uses the terminal foreground. Cyan identifies the active model or selection, green a completed action, yellow a pending decision, red a failure, and dim text secondary metadata. Every state also carries a word or symbol. Borders use single-cell rules only where they separate persistent regions.
+The terminal background is never painted. Primary text uses the terminal foreground. Each resolved theme supplies accent, success, warning, error, and muted colors; every state also carries a word or symbol. Borders use single-cell rules only where they separate persistent regions.
+
+The empty transcript may show a bounded static welcome canvas. Sakura Byte's original anime-inspired figure belongs to this project and references no existing character or franchise. The canvas disappears as soon as durable conversation rows exist and is suppressed by narrow dimensions, `NO_COLOR`, or ASCII mode. User-defined themes use the same limits.
 
 Typography is the terminal's monospace face. Hierarchy comes from weight, spacing, and concise labels; uppercase is reserved for conventional status tokens such as `ESC` and `NO_COLOR`.
 
@@ -27,7 +29,7 @@ Typography is the terminal's monospace face. Hierarchy comes from weight, spacin
 
 - `Enter` submits; `Ctrl+J` inserts a newline.
 - `Ctrl+C` cancels active agent work; a second `Ctrl+C` while idle exits.
-- `Ctrl+O` opens persisted sessions; `Ctrl+L` opens models; `Ctrl+P` opens commands.
+- `Ctrl+O` opens persisted sessions; `Ctrl+L` opens models; `Ctrl+T` opens themes; `Ctrl+P` opens commands.
 - `PageUp` and `PageDown` page the transcript; `End` returns to the live tail.
 - `Up` and `Down` navigate composer history when the cursor is on the first or last line.
 - `Esc` closes a selector or rejects an interruptible prompt without changing the current session.

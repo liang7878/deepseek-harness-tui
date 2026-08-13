@@ -47,6 +47,7 @@ pnpm dsh tui
 pnpm dsh tui --cwd ../your-project
 pnpm dsh tui --model deepseek-official/deepseek-v4-flash
 pnpm dsh tui --resume <session-id>
+pnpm dsh tui --theme sakura
 ```
 
 ## 火山方舟
@@ -72,6 +73,14 @@ pnpm dsh tui --model volcengine/your-endpoint-or-model-id
 
 机密只保存在环境变量或 Harness 凭据存储中；settings 仅包含凭据引用。
 
+## 主题
+
+![在 Sakura Byte 与 Classic Cyan 终端主题之间切换](assets/tui-themes.gif)
+
+按 `Ctrl+T` 或运行 `/theme`，即可在 **Classic Cyan**、**Sakura Byte**、**Deep Ocean** 和 **Ember Forge** 之间切换。选择器会将你的选择持久化到 `~/.dsh/settings.yaml`；`--theme <id>` 仅覆盖当前一次运行。Sakura Byte 使用专为本项目创作的原创动漫风欢迎画布，不引用现有角色或作品 IP。
+
+自定义主题从同一 settings 文件加载，支持经过校验的语义色、欢迎文案和可选字符画。完整示例见[主题配置约定](packages/bundle/tui-app/README.md#themes)。装饰画布只在空 transcript、宽窗口且支持颜色与 Unicode 的终端中显示；窄窗格、`NO_COLOR`、`--no-unicode` 和活动 transcript 始终保留紧凑的生产布局。
+
 ## 键盘工作流
 
 | 按键 | 操作 |
@@ -81,12 +90,13 @@ pnpm dsh tui --model volcengine/your-endpoint-or-model-id
 | `Ctrl+C` | 取消活动工作；idle 时退出。 |
 | `Ctrl+O` | 浏览持久化 Session。 |
 | `Ctrl+L` | 选择提供方和模型。 |
+| `Ctrl+T` | 选择并持久化终端主题。 |
 | `Ctrl+P` | 浏览命令。 |
 | `PageUp` / `PageDown` | 翻阅 transcript。 |
 | `Ctrl+E` | 返回实时末尾。 |
 | `Esc` | 关闭或取消当前交互。 |
 
-本地命令包括 `/new`、`/resume`、`/sessions`、`/model`、`/models`、`/commands`、`/help` 与 `/quit`。插件贡献的 slash command 会出现在同一个命令面板中。
+本地命令包括 `/new`、`/resume`、`/sessions`、`/model`、`/models`、`/theme`、`/themes`、`/commands`、`/help` 与 `/quit`。插件贡献的 slash command 会出现在同一个命令面板中。
 
 ## 架构
 

@@ -10,22 +10,21 @@ import { Box, Text, useApp, useInput, useStdout } from 'ink'
 import type { Key } from 'ink'
 import type { TranscriptRow } from './projection.ts'
 import type { ModalOption, TuiController, TuiModal, TuiSnapshot } from './runtime.ts'
+import type { ThemeDefinition } from './themes.ts'
 
 // The source launcher and production bundler select different JSX transforms.
 void React.createElement
 
 interface Palette {
-  accent?: 'cyan'
-  success?: 'green'
-  warning?: 'yellow'
-  error?: 'red'
-  muted?: 'gray'
+  accent?: string
+  success?: string
+  warning?: string
+  error?: string
+  muted?: string
 }
 
-function palette(enabled: boolean): Palette {
-  return enabled
-    ? { accent: 'cyan', success: 'green', warning: 'yellow', error: 'red', muted: 'gray' }
-    : {}
+function palette(theme: ThemeDefinition, enabled: boolean): Palette {
+  return enabled ? theme.palette : {}
 }
 
 function paint(color: string | undefined): { color: string } | {} {
@@ -137,12 +136,13 @@ function TranscriptRowView({ row, unicode, colors, detailLines }: {
   )
 }
 
-function Transcript({ snapshot, rows, page, unicode, colors, height, columns }: {
+function Transcript({ snapshot, rows, page, unicode, colors, color, height, columns }: {
   snapshot: TuiSnapshot
   rows: readonly TranscriptRow[]
   page: number
   unicode: boolean
   colors: Palette
+  color: boolean
   height: number
   columns: number
 }) {
@@ -152,10 +152,25 @@ function Transcript({ snapshot, rows, page, unicode, colors, height, columns }: 
   const visible = rows.slice(start, end)
   const detailLines = columns < 50 ? 3 : columns < 80 ? 5 : 8
   if (visible.length === 0) {
+    const showCanvas = showsWelcomeCanvas(snapshot.theme, color, unicode, columns, height)
     return (
       <Box flexGrow={1} justifyContent="center" alignItems="center" flexDirection="column">
-        <Text bold {...paint(colors.accent)}>Ready in {snapshot.cwd}</Text>
-        <Text dimColor>Describe a task, or press Ctrl+P for commands.</Text>
+        {showCanvas && (
+          <Box
+            borderStyle="round"
+            borderColor={colors.accent}
+            paddingX={3}
+            marginBottom={1}
+            flexDirection="column"
+          >
+            {snapshot.theme.welcome.art.map((line, index) => (
+              <Text key={`${String(index)}-${line}`} bold {...paint(colors.accent)}>{line}</Text>
+            ))}
+          </Box>
+        )}
+        <Text bold {...paint(colors.accent)}>{snapshot.theme.welcome.title}</Text>
+        <Text dimColor>{snapshot.theme.welcome.subtitle}</Text>
+        <Text dimColor>{snapshot.cwd}</Text>
       </Box>
     )
   }
@@ -232,8 +247,18 @@ function edit(
   return { value: chars.join(''), cursor: cursor + inserted.length }
 }
 
+function showsWelcomeCanvas(
+  theme: ThemeDefinition,
+  color: boolean,
+  unicode: boolean,
+  columns: number,
+  height: number,
+): boolean {
+  return color && unicode && columns >= 84 && height >= 14 && theme.welcome.art.length > 0
+}
+
 /** Pure editor operations exposed for terminal-input conformance tests. */
-export const uiInternals = { edit }
+export const uiInternals = { edit, showsWelcomeCanvas }
 
 function Composer({ controller, disabled, colors }: {
   controller: TuiController
@@ -422,7 +447,7 @@ export function TuiApp({ controller, color, unicode }: {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
   const { exit } = useApp()
   const { columns, rows } = useTerminalSize()
-  const colors = useMemo(() => palette(color), [color])
+  const colors = useMemo(() => palette(snapshot.theme, color), [color, snapshot.theme])
   const [page, setPage] = useState(0)
 
   useEffect(() => {
@@ -450,6 +475,10 @@ export function TuiApp({ controller, color, unicode }: {
     }
     if (key.ctrl && input === 'p') {
       void controller.openCommands()
+      return
+    }
+    if (key.ctrl && input === 't') {
+      void controller.openThemes()
       return
     }
     if (key.pageUp) {
@@ -482,6 +511,7 @@ export function TuiApp({ controller, color, unicode }: {
             page={page}
             unicode={unicode}
             colors={colors}
+            color={color}
             height={transcriptHeight}
             columns={columns}
           />
@@ -490,7 +520,7 @@ export function TuiApp({ controller, color, unicode }: {
       <TodoStrip snapshot={snapshot} colors={colors} columns={columns} />
       <Box justifyContent="space-between">
         <Text {...paint(snapshot.notice?.kind === 'error' ? colors.error : colors.muted)}>
-          {snapshot.notice?.text ?? (snapshot.status === 'running' ? 'Ctrl+C cancel · Enter steers next step' : 'Ctrl+P commands')}
+          {snapshot.notice?.text ?? (snapshot.status === 'running' ? 'Ctrl+C cancel · Enter steers next step' : 'Ctrl+P commands · Ctrl+T themes')}
         </Text>
         {columns >= 80 && <Text dimColor>{snapshot.sessionId}</Text>}
       </Box>

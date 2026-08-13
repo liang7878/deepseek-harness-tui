@@ -77,7 +77,7 @@ function start(args: readonly string[] = []): {
 describe('TUI pseudo-terminal process', () => {
   it('accepts Unicode input, renders durable output, and restores an inline terminal', async () => {
     const terminal = start(['--inline', '--no-unicode'])
-    await terminal.waitFor('Ready in')
+    await terminal.waitFor('Ctrl+P commands · Ctrl+T themes')
     await terminal.type('请检查项目')
     terminal.process.write('\r')
     await terminal.waitFor('Scripted response from the real TUI process.')
@@ -92,7 +92,7 @@ describe('TUI pseudo-terminal process', () => {
 
   it('enters and leaves the alternate screen on normal exit', async () => {
     const terminal = start()
-    await terminal.waitFor('Ready in')
+    await terminal.waitFor('Ctrl+P commands · Ctrl+T themes')
     await new Promise(resolveWait => setTimeout(resolveWait, 100))
     await terminal.type('/quit')
     terminal.process.write('\r')

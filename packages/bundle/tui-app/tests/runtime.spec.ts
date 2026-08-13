@@ -5,9 +5,24 @@ import AgentRegistry, { Inbox, type Agent, type AgentHandle, type CreateAgentOpt
 import AgentDefaultModel from '@deepseek-ai/dsh-agent-default-model'
 import ApprovalService from '@deepseek-ai/dsh-user-approval'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
+import { SettingsProvider, type SettingsNamespace } from '@deepseek-ai/dsh-settings'
 import UserQuestionService from '@deepseek-ai/dsh-user-questions'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { TuiController } from '../src/runtime.ts'
+import { TUI_SETTINGS_NAMESPACE, TuiController } from '../src/runtime.ts'
+
+class MemorySettings extends SettingsProvider {
+  readonly writable = true
+  private storedDocument: Record<string, unknown> = {}
+
+  protected load(): Promise<Record<string, unknown>> {
+    return Promise.resolve(structuredClone(this.storedDocument))
+  }
+
+  protected persist(ns: SettingsNamespace, section: Record<string, unknown>): Promise<void> {
+    this.storedDocument = { ...this.storedDocument, [ns]: structuredClone(section) }
+    return Promise.resolve()
+  }
+}
 
 interface Bench {
   ctx: Context
@@ -32,6 +47,7 @@ afterEach(async () => {
 
 async function mounted(): Promise<Bench> {
   const ctx = new Context()
+  await ctx.plugin(MemorySettings)
   await ctx.plugin(SessionStore)
   await ctx.plugin(AgentRegistry)
   await ctx.plugin(AgentDefaultModel, { provider: 'demo', model: 'default' })
@@ -149,6 +165,39 @@ describe('TUI controller', () => {
     await choosing
     expect(bench.controller.getSnapshot()).toMatchObject({ provider: 'demo', model: 'next' })
     expect(bench.saveSelection).toHaveBeenCalledWith({ provider: 'demo', model: 'next' })
+  })
+
+  it('selects, persists, and live-loads terminal themes', async () => {
+    const bench = await mounted()
+    await bench.controller.selectTheme('sakura')
+    expect(bench.controller.getSnapshot().theme).toMatchObject({ id: 'sakura', custom: false })
+    expect(bench.ctx.settings.describe().find(row => row.ns === TUI_SETTINGS_NAMESPACE)?.user)
+      .toEqual({ theme: 'sakura' })
+
+    await bench.ctx.settings.update(TUI_SETTINGS_NAMESPACE, {
+      theme: 'nebula',
+      customThemes: {
+        nebula: {
+          name: 'Nebula Lab',
+          description: 'Custom violet workspace.',
+          accent: '#bb66ff',
+          success: 'cyan',
+          warning: 'yellow',
+          error: 'red',
+          muted: 'gray',
+          title: 'Nebula online',
+          subtitle: 'Build beyond the horizon.',
+          art: ['  *  .  *  '],
+        },
+      },
+    })
+    await vi.waitFor(() => {
+      expect(bench.controller.getSnapshot().theme).toMatchObject({
+        id: 'nebula',
+        name: 'Nebula Lab',
+        custom: true,
+      })
+    })
   })
 
   it('answers approvals and structured multi-select questions', async () => {

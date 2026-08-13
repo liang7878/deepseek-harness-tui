@@ -10,9 +10,37 @@ DeepSeek Harness 的第一方交互式终端应用。它的组合包 patch 叠�
 dsh tui
 dsh tui --resume <session-id>
 dsh tui --cwd ../project --model <provider>/<model>
+dsh tui --theme sakura
 ```
 
-启动提供方接受 `--resume`、`--cwd`、`--model`、`--inline`、`--no-color` 和 `--no-unicode`。`NO_COLOR` 同样会关闭 ANSI 颜色。输入或输出被重定向时，应用会在 Agent 启动前失败；交互式渲染器要求兼容 VT、且至少为 30 列 8 行的终端。
+启动提供方接受 `--resume`、`--cwd`、`--model`、`--theme`、`--inline`、`--no-color` 和 `--no-unicode`。`NO_COLOR` 同样会关闭 ANSI 颜色。输入或输出被重定向时，应用会在 Agent 启动前失败；交互式渲染器要求兼容 VT、且至少为 30 列 8 行的终端。
+
+## 主题
+
+内置主题包括 `classic`、`sakura`、`ocean` 与 `ember`。`Ctrl+T`、`/theme` 和 `/themes` 会打开选择器并持久化选择，`/theme <id>` 可直接选择。`--theme <id>` 只覆盖当前启动，不改变已保存偏好。
+
+`tui` settings namespace 也接受完整自定义主题：
+
+```yaml
+tui:
+  theme: night-lab
+  customThemes:
+    night-lab:
+      name: Night Lab
+      description: Violet focus for late sessions.
+      accent: "#bb66ff"
+      success: cyan
+      warning: yellow
+      error: red
+      muted: gray
+      title: Nebula online
+      subtitle: Build beyond the horizon.
+      art:
+        - "      *   .   *"
+        - "   .    NIGHT    ."
+```
+
+颜色可以是六位十六进制值，也可以是 Ink 的 `black`、`red`、`green`、`yellow`、`blue`、`magenta`、`cyan`、`white` 和 `gray`。ID 使用小写 kebab-case。registry 最多接受 20 个自定义主题，每个字符画最多 10 行、每行最多 64 个字符；无效的已存选择会在启动时明确失败。装饰字符画是空 transcript 的欢迎画布，不会覆盖对话内容；窗口少于 84 列、transcript 区少于 14 行或禁用颜色、Unicode 时不会显示。
 
 ## 交互
 
@@ -23,12 +51,13 @@ dsh tui --cwd ../project --model <provider>/<model>
 | `Ctrl+C` | 取消活动工作，或在 idle 时退出。 |
 | `Ctrl+O` | 选择持久化 Session。 |
 | `Ctrl+L` | 选择已配置的提供方与模型。 |
+| `Ctrl+T` | 选择并持久化终端主题。 |
 | `Ctrl+P` | 浏览本地命令与已注册命令。 |
 | `PageUp` / `PageDown` | 翻阅 transcript（文本记录）。 |
 | `Ctrl+E` | 返回 transcript 实时末尾。 |
 | `Esc` | 取消当前选择器、审批或问题。 |
 
-本地 `/new`、`/resume`、`/sessions`、`/model`、`/models`、`/commands`、`/help`、`/quit` 与 `/exit` 命令只控制应用，绝不会进入模型 transcript。其他 slash command 通过 [`ctx.commands`](../../interaction/commands/README.md) 分发。
+本地 `/new`、`/resume`、`/sessions`、`/model`、`/models`、`/theme`、`/themes`、`/commands`、`/help`、`/quit` 与 `/exit` 命令只控制应用，绝不会进入模型 transcript。其他 slash command 通过 [`ctx.commands`](../../interaction/commands/README.md) 分发。
 
 控制器持有一个顶层 Agent 句柄。已结算的消息、reasoning 活动、工具活动、命令结果、Todo 状态和错误都从权威 Session 日志增量投影。原始 reasoning 文本折叠为活动摘要。工具行调用各定义的 `presentCall` 与 `presentResult` 方法；回放时若定义不可用，则展示可读的原始回退内容。审批与 [`ctx.userQuestions`](../../interaction/user-questions/README.md) 会暂停当前 Agent，直至用户回答或取消。切换 Session 时，应用先 flush 并 dispose（资源释放）旧句柄，再发布新句柄。
 

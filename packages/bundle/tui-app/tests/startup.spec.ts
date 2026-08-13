@@ -48,6 +48,7 @@ export const apply = ctx => globalThis.__tuiStartupApply(ctx)
     '    resume: !!js ctx.tuiStartup.resume',
     '    cwd: !!js ctx.tuiStartup.cwd',
     '    model: !!js ctx.tuiStartup.model',
+    '    theme: !!js ctx.tuiStartup.theme',
     '    inline: !!js ctx.tuiStartup.inline',
     '    color: !!js ctx.tuiStartup.color',
     '    unicode: !!js ctx.tuiStartup.unicode',
@@ -88,6 +89,7 @@ describe('TUI command-line provider', () => {
       '--resume', 'session-a',
       '--cwd', '.',
       '--model', 'ark/deepseek-v4',
+      '--theme', 'sakura',
       '--inline',
       '--no-unicode',
     ])
@@ -95,6 +97,7 @@ describe('TUI command-line provider', () => {
       resume: 'session-a',
       cwd: process.cwd(),
       model: 'ark/deepseek-v4',
+      theme: 'sakura',
       inline: true,
       color: false,
       unicode: false,
@@ -119,6 +122,7 @@ describe('TUI command-line provider', () => {
   it.each([
     { args: ['--model', 'bare-model'], message: '--model must be provider/model' },
     { args: ['--resume='], message: '--resume needs a session id' },
+    { args: ['--theme', 'Sakura'], message: '--theme must be a lowercase id' },
   ])('rejects invalid options before activating the runtime', async ({ args, message }) => {
     const { startup, observed } = await bootStartup(args)
     expect(observed.out).toContain(message)

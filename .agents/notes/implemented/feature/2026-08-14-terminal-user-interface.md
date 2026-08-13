@@ -20,6 +20,8 @@ Settled transcript content is projected from the Session log. Live agent status,
 
 The profile supports macOS, Linux, and Windows, honors `NO_COLOR`, retains text labels for every color state, adapts to narrow terminals, and restores terminal state on every exit path. A non-interactive invocation fails with a correction instead of starting a hidden agent.
 
+The [terminal theme system](2026-08-14-terminal-theme-system.md) extends presentation through validated user settings while preserving these monochrome, narrow-terminal, and active-transcript guarantees.
+
 ## Ownership
 
 `dsh-agent`, `dsh-session`, and each tool remain authoritative for runtime and durable facts. `dsh-tui-app` owns only terminal presentation, input editing, local navigation commands, and one current top-level Agent handle. Harness slash commands dispatch through `ctx.commands`; local navigation commands never enter the Session log.

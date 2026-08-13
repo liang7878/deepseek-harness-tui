@@ -15,7 +15,7 @@ import { TuiApp } from './ui.tsx'
 /** Stable Cordis plugin name. */
 export const name = 'tui-runtime'
 /** Startup values must exist before the runtime row resolves. */
-export const inject = ['tuiStartup']
+export const inject = ['tuiStartup', 'settings']
 
 /** Runtime configuration populated by the startup provider. */
 export interface Config extends TuiConfig {}
@@ -25,6 +25,7 @@ export const Config: z<Config> = z.object({
   resume: z.string(),
   cwd: z.string().required(),
   model: z.string(),
+  theme: z.string(),
   inline: z.boolean().default(false),
   color: z.boolean().default(true),
   unicode: z.boolean().default(true),

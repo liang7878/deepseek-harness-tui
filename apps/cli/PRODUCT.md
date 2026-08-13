@@ -22,11 +22,11 @@ DeepSeek Harness exposes its plugin-composed agent runtime directly in the termi
 
 ## Brand Personality
 
-Focused, transparent, and precise. The interface gives active work priority, explains blocked states in concrete language, and avoids decorative terminal effects.
+Focused, transparent, precise, and optionally expressive. The interface gives active work priority, explains blocked states in concrete language, and reserves decorative themes for the empty welcome state.
 
 ## Anti-references
 
-The CLI must not resemble a dashboard compressed into character cells, a chat transcript with hidden tool activity, or a full-screen application that assumes color, mouse input, or a large local terminal. It must not animate for decoration or replace standard terminal navigation with novel gestures.
+The CLI must not resemble a dashboard compressed into character cells, a chat transcript with hidden tool activity, or a full-screen application that assumes color, mouse input, or a large local terminal. Themes must not animate, cover active work, depend on copyrighted characters, or replace standard terminal navigation with novel gestures.
 
 ## Design Principles
 
@@ -35,6 +35,7 @@ The CLI must not resemble a dashboard compressed into character cells, a chat tr
 3. Make keyboard paths complete: every action works without a mouse and exposes its shortcut where the action appears.
 4. Degrade without ambiguity: narrow, monochrome, non-Unicode, and non-interactive environments retain meaning rather than silently dropping controls.
 5. Render from durable facts: settled conversation content comes from the Session log; live state supplements it without becoming a second history.
+6. Keep personality optional: built-in and custom themes may enrich the empty state, but compact, monochrome, and active-work layouts stay fully functional.
 
 ## Accessibility & Inclusion
 

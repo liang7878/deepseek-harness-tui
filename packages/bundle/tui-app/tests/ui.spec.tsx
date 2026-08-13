@@ -2,6 +2,7 @@
 
 import type { Key } from 'ink'
 import { describe, expect, it } from 'vitest'
+import { DEFAULT_TUI_THEME_SETTINGS, resolveTheme, themeRegistry } from '../src/themes.ts'
 import { uiInternals } from '../src/ui.tsx'
 
 const key = (value: Partial<Key> = {}): Key => ({
@@ -48,5 +49,14 @@ describe('TUI composer editor', () => {
       .toEqual({ value: 'task', cursor: 4, submit: true })
     expect(uiInternals.edit('task', 4, 'p', key({ ctrl: true })))
       .toEqual({ value: 'task', cursor: 4 })
+  })
+
+  it('shows decorative art only on capable wide color terminals', () => {
+    const sakura = resolveTheme(themeRegistry(DEFAULT_TUI_THEME_SETTINGS), 'sakura')
+    expect(uiInternals.showsWelcomeCanvas(sakura, true, true, 100, 20)).toBe(true)
+    expect(uiInternals.showsWelcomeCanvas(sakura, false, true, 100, 20)).toBe(false)
+    expect(uiInternals.showsWelcomeCanvas(sakura, true, false, 100, 20)).toBe(false)
+    expect(uiInternals.showsWelcomeCanvas(sakura, true, true, 60, 20)).toBe(false)
+    expect(uiInternals.showsWelcomeCanvas(sakura, true, true, 100, 10)).toBe(false)
   })
 })

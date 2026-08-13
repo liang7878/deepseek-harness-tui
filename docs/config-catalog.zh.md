@@ -2802,7 +2802,7 @@ export type ToolPresentationMode = 'native' | 'code' | 'both'
 
 ## `@deepseek-ai/dsh-tui-app`
 
-需要：`tuiStartup`
+需要：`tuiStartup` · `settings`
 
 ```ts config-catalog
 /** Runtime configuration populated by the startup provider. */
@@ -2816,6 +2816,8 @@ export interface TuiConfig {
   cwd: string
   /** Initial provider/model pair. */
   model?: string
+  /** Initial built-in or custom terminal theme. */
+  theme?: string
   /** Whether rendering stays in ordinary terminal scrollback. */
   inline: boolean
   /** Whether ANSI color is enabled. */

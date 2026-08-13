@@ -22,11 +22,12 @@
 
     - id: tui-runtime
       name: '@deepseek-ai/dsh-tui-app'
-      inject: [tuiStartup]
+      inject: [tuiStartup, settings]
       config:
         resume: !!js ctx.tuiStartup.resume
         cwd: !!js ctx.tuiStartup.cwd
         model: !!js ctx.tuiStartup.model
+        theme: !!js ctx.tuiStartup.theme
         inline: !!js ctx.tuiStartup.inline
         color: !!js ctx.tuiStartup.color
         unicode: !!js ctx.tuiStartup.unicode

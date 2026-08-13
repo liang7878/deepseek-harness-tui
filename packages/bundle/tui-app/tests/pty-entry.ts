@@ -5,9 +5,23 @@ import AgentRegistry, { Inbox, type Agent, type AgentHandle, type CreateAgentOpt
 import AgentDefaultModel from '@deepseek-ai/dsh-agent-default-model'
 import { createAssistantMessage } from '@deepseek-ai/dsh-llm'
 import SessionStore from '@deepseek-ai/dsh-session'
+import { SettingsProvider, type SettingsNamespace } from '@deepseek-ai/dsh-settings'
 import { apply } from '../src/index.ts'
 
+class MemorySettings extends SettingsProvider {
+  readonly writable = true
+
+  protected load(): Promise<Record<string, unknown>> {
+    return Promise.resolve({})
+  }
+
+  protected persist(_ns: SettingsNamespace, _section: Record<string, unknown>): Promise<void> {
+    return Promise.resolve()
+  }
+}
+
 const ctx = new Context()
+await ctx.plugin(MemorySettings)
 await ctx.plugin(SessionStore)
 await ctx.plugin(AgentRegistry)
 await ctx.plugin(AgentDefaultModel, { provider: 'demo', model: 'scripted' })

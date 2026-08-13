@@ -19,6 +19,7 @@ import type { CommandDescriptor } from '@deepseek-ai/dsh-commands'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import { SessionId, type SessionHeader } from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-session-persistence'
+import { settingsNamespace, type SettingsScope } from '@deepseek-ai/dsh-settings'
 import type { ApprovalOutcome, ApprovalRequest } from '@deepseek-ai/dsh-user-approval'
 import type {
   AskUserQuestionAnswer,
@@ -27,6 +28,18 @@ import type {
   AskUserQuestionRequest,
 } from '@deepseek-ai/dsh-user-questions'
 import { TranscriptProjection, type TranscriptRow } from './projection.ts'
+import {
+  DEFAULT_TUI_THEME_SETTINGS,
+  resolveTheme,
+  themeRegistry,
+  TuiThemeSettingsSchema,
+  validateThemeSettings,
+  type ThemeDefinition,
+  type TuiThemeSettings,
+} from './themes.ts'
+
+/** User-settings namespace for terminal appearance. */
+export const TUI_SETTINGS_NAMESPACE = settingsNamespace('tui')
 
 /** Startup configuration transferred from the command-line provider. */
 export interface TuiConfig {
@@ -36,6 +49,8 @@ export interface TuiConfig {
   cwd: string
   /** Initial provider/model pair. */
   model?: string
+  /** Initial built-in or custom terminal theme. */
+  theme?: string
   /** Whether rendering stays in ordinary terminal scrollback. */
   inline: boolean
   /** Whether ANSI color is enabled. */
@@ -54,7 +69,7 @@ export interface ModalOption {
 /** Active modal state rendered over the transcript. */
 export interface TuiModal {
   id: number
-  kind: 'approval' | 'question' | 'sessions' | 'models' | 'commands' | 'help'
+  kind: 'approval' | 'question' | 'sessions' | 'models' | 'themes' | 'commands' | 'help'
   title: string
   detail?: string
   options: readonly ModalOption[]
@@ -69,6 +84,7 @@ export interface TuiSnapshot {
   cwd: string
   provider: string
   model: string
+  theme: ThemeDefinition
   status: 'starting' | 'idle' | 'running' | 'switching' | 'error'
   rows: readonly TranscriptRow[]
   todos: readonly { content: string; status: 'pending' | 'in_progress' | 'completed' }[]
@@ -112,6 +128,9 @@ export class TuiController {
   private modalSettlement: ModalSettlement | undefined
   private modalSequence = 0
   private commandAbort: AbortController | undefined
+  private themeSettings: TuiThemeSettings = DEFAULT_TUI_THEME_SETTINGS
+  private themes: readonly ThemeDefinition[] = themeRegistry(DEFAULT_TUI_THEME_SETTINGS)
+  private themeScope: SettingsScope<TuiThemeSettings> | undefined
   private disposed = false
 
   constructor(private readonly ctx: Context, private readonly config: TuiConfig) {
@@ -124,6 +143,7 @@ export class TuiController {
       cwd: config.cwd,
       provider: initial.provider,
       model: initial.model,
+      theme: resolveTheme(this.themes, 'classic'),
       status: 'starting',
       rows: [],
       todos: [],
@@ -144,6 +164,15 @@ export class TuiController {
 
   /** Register interaction providers and open the initial session. */
   async start(): Promise<void> {
+    const themeScope = this.ctx.settings.register(TUI_SETTINGS_NAMESPACE, TuiThemeSettingsSchema, {
+      validate: validateThemeSettings,
+    })
+    this.themeScope = themeScope
+    this.activateThemes(themeScope.get(), this.config.theme)
+    this.disposers.push(themeScope.watch((next) => {
+      this.activateThemes(next)
+    }))
+
     const sessionEventDispose = this.ctx.on('session/event', (session, event) => {
       if (session !== this.agent?.session) return
       this.projection?.apply(event)
@@ -281,6 +310,7 @@ export class TuiController {
       { value: '/new', label: '/new [cwd]', description: 'Start a new session.' },
       { value: '/sessions', label: '/sessions', description: 'Resume persisted work.' },
       { value: '/models', label: '/models', description: 'Select a model.' },
+      { value: '/theme', label: '/theme [id]', description: 'Select and persist terminal appearance.' },
       { value: '/help', label: '/help', description: 'Show keybindings and commands.' },
       { value: '/quit', label: '/quit', description: 'Exit after flushing the session.' },
     ]
@@ -302,6 +332,42 @@ export class TuiController {
     if (value !== undefined) {
       this.update({ notice: { kind: 'info', text: `Type ${value} in the composer${value === '/new' ? ' followed by an optional directory' : ''}.` } })
     }
+  }
+
+  /** Open the built-in and user-defined theme selector. */
+  async openThemes(): Promise<void> {
+    const current = this.snapshot.theme.id
+    const ordered = [
+      ...this.themes.filter(theme => theme.id === current),
+      ...this.themes.filter(theme => theme.id !== current),
+    ]
+    const selected = await this.choose({
+      kind: 'themes',
+      title: 'Select theme',
+      detail: 'Custom themes are loaded from the tui.customThemes section in settings.yaml.',
+      options: ordered.map(theme => ({
+        value: theme.id,
+        label: `${theme.id === this.snapshot.theme.id ? '● ' : ''}${theme.name}`,
+        description: `${theme.description}${theme.custom ? ' · custom' : ''}`,
+      })),
+      multiSelect: false,
+      allowCustom: false,
+    }).catch(() => undefined)
+    const id = selected?.values[0]
+    if (id !== undefined) await this.selectTheme(id)
+  }
+
+  /**
+   * Select and persist one resolved terminal theme.
+   * @param id - Built-in or custom theme identifier.
+   */
+  async selectTheme(id: string): Promise<void> {
+    const theme = resolveTheme(this.themes, id)
+    const scope = this.themeScope
+    if (scope === undefined) throw new Error('TUI theme settings are not registered')
+    await scope.update({ theme: id })
+    this.themeSettings = { ...this.themeSettings, theme: id }
+    this.update({ theme, notice: { kind: 'info', text: `Theme changed to ${theme.name}.` } })
   }
 
   /**
@@ -375,6 +441,15 @@ export class TuiController {
         else await this.selectModel(value)
         return true
       }
+      case '/themes':
+        await this.openThemes()
+        return true
+      case '/theme': {
+        const value = rest[0]
+        if (value === undefined) await this.openThemes()
+        else await this.selectTheme(value)
+        return true
+      }
       case '/commands':
         await this.openCommands()
         return true
@@ -392,15 +467,23 @@ export class TuiController {
       title: 'Keyboard and local commands',
       detail: [
         'Enter send  ·  Ctrl+J newline  ·  Ctrl+C cancel/exit',
-        'Ctrl+O sessions  ·  Ctrl+L models  ·  Ctrl+P commands',
+        'Ctrl+O sessions  ·  Ctrl+L models  ·  Ctrl+T themes  ·  Ctrl+P commands',
         'PageUp/PageDown transcript  ·  End live tail  ·  Esc close',
         '',
-        '/new [cwd]  /resume [id]  /sessions  /model [provider/model]  /commands  /quit',
+        '/new [cwd]  /resume [id]  /sessions  /model [provider/model]  /theme [id]  /commands  /quit',
       ].join('\n'),
       options: [{ value: 'close', label: 'Close' }],
       multiSelect: false,
       allowCustom: false,
     }).catch(() => undefined)
+  }
+
+  private activateThemes(settings: TuiThemeSettings, requested = settings.theme): void {
+    const registry = themeRegistry(settings)
+    const theme = resolveTheme(registry, requested)
+    this.themeSettings = settings
+    this.themes = registry
+    if (this.snapshot.theme.id !== theme.id || this.snapshot.theme !== theme) this.update({ theme })
   }
 
   private async create(cwd: string, model?: string): Promise<void> {
