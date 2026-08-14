@@ -33,7 +33,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: npm run build
       - run: npm run typecheck
       - run: npm run test
-      - run: npm run build
       - run: npm pack --dry-run
