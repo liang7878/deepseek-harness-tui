@@ -2,7 +2,7 @@
 
 English | [中文](providers.zh.md)
 
-This guide assumes you started the Web UI through the [root README](../../../README.md#run). Model changes take effect on the next request without restarting the server.
+This guide covers the Web UI and the same user settings consumed by the TUI. Start either interface through the [root README](../../../README.md#run). Model changes take effect on the next request without restarting the running interface.
 
 ## Configure DeepSeek
 
@@ -27,6 +27,108 @@ Choose **Add a custom provider** for a company gateway, self-hosted server, or p
 The Provider ID is permanent because requests, saved sessions, model defaults, and credential references use it. To rename a provider, add a new provider and delete the old one. The display name, base URL, protocol, credential, and models remain editable.
 
 Under **Model catalog**, choose **Fetch available models** to query the base URL and credential currently shown in the form. Selecting candidates updates the draft; the provider is not stored until you save. Catalog providers use their installed catalog without a network request.
+
+## MaaS configuration recipes
+
+The following services expose OpenAI-compatible Chat Completions endpoints and work through `llm-pi-ai`. Copy only the provider you use into `$DSH_HOME/settings.yaml`, set the referenced environment variable, and replace the sample model id with an exact id available to your account. Model catalogs and regional availability change independently of Harness.
+
+### Volcengine Ark
+
+Ark uses an endpoint or model id created in the console. The base URL ends at `/api/v3`; Harness appends the request path. See the [official OpenAI SDK compatibility guide](https://www.volcengine.com/docs/82379/1330626).
+
+```yaml
+llm-pi-ai:
+  providers:
+    volcengine:
+      displayName: Volcengine Ark
+      apiKeyEnv: ARK_API_KEY
+      api: openai-completions
+      baseURL: https://ark.cn-beijing.volces.com/api/v3
+      models:
+        - id: your-endpoint-or-model-id
+```
+
+### SiliconFlow
+
+SiliconFlow model ids include the publisher, such as `deepseek-ai/DeepSeek-R1`. Copy the current id from the [SiliconFlow model catalog](https://siliconflow.com/models) and use the endpoint from its [official quickstart](https://docs.siliconflow.com/en/userguide/quickstart).
+
+```yaml
+llm-pi-ai:
+  providers:
+    siliconflow:
+      displayName: SiliconFlow
+      apiKeyEnv: SILICONFLOW_API_KEY
+      api: openai-completions
+      baseURL: https://api.siliconflow.com/v1
+      models:
+        - id: deepseek-ai/DeepSeek-R1
+```
+
+### OpenRouter
+
+OpenRouter model ids use `publisher/model`. The [model directory](https://openrouter.ai/models) supplies the current ids, and the [OpenAI SDK guide](https://openrouter.ai/docs/guides/community/openai-sdk) owns endpoint details.
+
+```yaml
+llm-pi-ai:
+  providers:
+    openrouter:
+      displayName: OpenRouter
+      apiKeyEnv: OPENROUTER_API_KEY
+      api: openai-completions
+      baseURL: https://openrouter.ai/api/v1
+      models:
+        - id: deepseek/deepseek-r1
+```
+
+### Alibaba Cloud Model Studio
+
+API keys and endpoints are regional. This example uses the shared Beijing endpoint; replace it with the workspace endpoint shown in your console when applicable. The [OpenAI compatibility guide](https://help.aliyun.com/en/model-studio/compatibility-of-openai-with-dashscope) lists current regions and model ids.
+
+```yaml
+llm-pi-ai:
+  providers:
+    model-studio:
+      displayName: Alibaba Cloud Model Studio
+      apiKeyEnv: DASHSCOPE_API_KEY
+      api: openai-completions
+      baseURL: https://dashscope.aliyuncs.com/compatible-mode/v1
+      models:
+        - id: qwen-plus
+```
+
+### Together AI
+
+Together model ids use `publisher/model`. Choose an available chat model from the [model library](https://www.together.ai/models); the [OpenAI compatibility guide](https://docs.together.ai/docs/inference/openai-compatibility) owns endpoint behavior.
+
+```yaml
+llm-pi-ai:
+  providers:
+    together:
+      displayName: Together AI
+      apiKeyEnv: TOGETHER_API_KEY
+      api: openai-completions
+      baseURL: https://api.together.ai/v1
+      models:
+        - id: deepseek-ai/DeepSeek-V3
+```
+
+### Fireworks AI
+
+Fireworks serverless model ids use `accounts/fireworks/models/<model>`. Copy the current id from the [model library](https://fireworks.ai/models); the [OpenAI compatibility guide](https://docs.fireworks.ai/tools-sdks/openai-compatibility) owns endpoint behavior.
+
+```yaml
+llm-pi-ai:
+  providers:
+    fireworks:
+      displayName: Fireworks AI
+      apiKeyEnv: FIREWORKS_API_KEY
+      api: openai-completions
+      baseURL: https://api.fireworks.ai/inference/v1
+      models:
+        - id: accounts/fireworks/models/your-model
+```
+
+After saving, select the route as `provider/model-id`. For example, `pnpm dsh tui --model siliconflow/deepseek-ai/DeepSeek-R1` selects the SiliconFlow recipe above. A model id containing `/` remains part of the model id after the first route separator.
 
 ### Image input
 

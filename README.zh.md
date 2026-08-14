@@ -52,7 +52,7 @@ pnpm dsh tui --resume <session-id>
 pnpm dsh tui --theme sakura
 ```
 
-## 火山方舟
+## MaaS 服务
 
 在 `~/.dsh/settings.yaml` 中添加 OpenAI 兼容路由。base URL 截止到 `/api/v3`；适配器会追加请求路径。
 
@@ -60,7 +60,7 @@ pnpm dsh tui --theme sakura
 llm-pi-ai:
   providers:
     volcengine:
-      name: Volcengine Ark
+      displayName: Volcengine Ark
       apiKeyEnv: ARK_API_KEY
       api: openai-completions
       baseURL: https://ark.cn-beijing.volces.com/api/v3
@@ -74,6 +74,8 @@ pnpm dsh tui --model volcengine/your-endpoint-or-model-id
 ```
 
 机密只保存在环境变量或 Harness 凭据存储中；settings 仅包含凭据引用。
+
+[模型配置指南](docs/user/guide/providers.md#maas-configuration-recipes)提供火山方舟、SiliconFlow、OpenRouter、阿里云百炼、Together AI 和 Fireworks AI 的可直接复制示例。
 
 ## 主题
 

@@ -52,7 +52,7 @@ pnpm dsh tui --resume <session-id>
 pnpm dsh tui --theme sakura
 ```
 
-## Volcengine Ark
+## MaaS providers
 
 Add an OpenAI-compatible route to `~/.dsh/settings.yaml`. The base URL stops at `/api/v3`; the adapter appends the request path.
 
@@ -60,7 +60,7 @@ Add an OpenAI-compatible route to `~/.dsh/settings.yaml`. The base URL stops at 
 llm-pi-ai:
   providers:
     volcengine:
-      name: Volcengine Ark
+      displayName: Volcengine Ark
       apiKeyEnv: ARK_API_KEY
       api: openai-completions
       baseURL: https://ark.cn-beijing.volces.com/api/v3
@@ -74,6 +74,8 @@ pnpm dsh tui --model volcengine/your-endpoint-or-model-id
 ```
 
 Secrets remain in the environment or the Harness credential store; settings contain only credential references.
+
+The [model configuration guide](docs/user/guide/providers.md#maas-configuration-recipes) includes ready-to-copy recipes for Volcengine Ark, SiliconFlow, OpenRouter, Alibaba Cloud Model Studio, Together AI, and Fireworks AI.
 
 ## Themes
 

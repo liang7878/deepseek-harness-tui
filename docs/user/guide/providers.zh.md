@@ -2,7 +2,7 @@
 
 [English](providers.md) | 中文
 
-本指南假定你已按照[根 README](../../../README.md#run)启动 Web UI。模型变更会在下一次请求时生效，不需要重启服务器。
+本指南覆盖 Web UI 与 TUI 共用的用户 settings。请按照[根 README](../../../README.md#run)启动任一界面。模型变更会在下一次请求时生效，不需要重启正在运行的界面。
 
 ## 配置 DeepSeek
 
@@ -27,6 +27,108 @@
 Provider ID 是永久的，因为请求、已保存会话、模型默认值和凭据引用都会使用它。如需重命名提供方，请添加新提供方并删除旧提供方。显示名称、基础 URL、协议、凭据和模型仍可编辑。
 
 在**模型目录**中选择**获取可用模型**，可查询表单当前显示的基础 URL 和凭据。选择候选项只会更新草稿；保存前不会存储提供方。目录提供方使用已安装目录，不发起网络请求。
+
+## MaaS 配置示例
+
+以下服务提供 OpenAI 兼容的 Chat Completions 端点，可以通过 `llm-pi-ai` 使用。只需将你使用的 provider 复制到 `$DSH_HOME/settings.yaml`，设置其引用的环境变量，并将示例模型 id 替换为账户实际可用的准确 id。模型目录与区域可用性会独立于 Harness 变化。
+
+### 火山方舟
+
+方舟使用控制台创建的 endpoint 或模型 id。base URL 截止到 `/api/v3`，Harness 会追加请求路径。端点细节见[官方 OpenAI SDK 兼容指南](https://www.volcengine.com/docs/82379/1330626)。
+
+```yaml
+llm-pi-ai:
+  providers:
+    volcengine:
+      displayName: Volcengine Ark
+      apiKeyEnv: ARK_API_KEY
+      api: openai-completions
+      baseURL: https://ark.cn-beijing.volces.com/api/v3
+      models:
+        - id: your-endpoint-or-model-id
+```
+
+### SiliconFlow
+
+SiliconFlow 模型 id 包含发布者，例如 `deepseek-ai/DeepSeek-R1`。请从 [SiliconFlow 模型目录](https://siliconflow.com/models)复制当前 id，并使用其[官方快速开始](https://docs.siliconflow.com/en/userguide/quickstart)提供的端点。
+
+```yaml
+llm-pi-ai:
+  providers:
+    siliconflow:
+      displayName: SiliconFlow
+      apiKeyEnv: SILICONFLOW_API_KEY
+      api: openai-completions
+      baseURL: https://api.siliconflow.com/v1
+      models:
+        - id: deepseek-ai/DeepSeek-R1
+```
+
+### OpenRouter
+
+OpenRouter 模型 id 使用 `publisher/model` 格式。[模型目录](https://openrouter.ai/models)提供当前 id，[OpenAI SDK 指南](https://openrouter.ai/docs/guides/community/openai-sdk)负责端点细节。
+
+```yaml
+llm-pi-ai:
+  providers:
+    openrouter:
+      displayName: OpenRouter
+      apiKeyEnv: OPENROUTER_API_KEY
+      api: openai-completions
+      baseURL: https://openrouter.ai/api/v1
+      models:
+        - id: deepseek/deepseek-r1
+```
+
+### 阿里云百炼
+
+API key 与端点按区域区分。本示例使用北京共享端点；适用时请替换为控制台显示的 workspace 端点。[OpenAI 兼容指南](https://help.aliyun.com/en/model-studio/compatibility-of-openai-with-dashscope)列出当前区域与模型 id。
+
+```yaml
+llm-pi-ai:
+  providers:
+    model-studio:
+      displayName: Alibaba Cloud Model Studio
+      apiKeyEnv: DASHSCOPE_API_KEY
+      api: openai-completions
+      baseURL: https://dashscope.aliyuncs.com/compatible-mode/v1
+      models:
+        - id: qwen-plus
+```
+
+### Together AI
+
+Together 模型 id 使用 `publisher/model` 格式。请从[模型库](https://www.together.ai/models)选择可用 chat 模型；端点行为由[OpenAI 兼容指南](https://docs.together.ai/docs/inference/openai-compatibility)说明。
+
+```yaml
+llm-pi-ai:
+  providers:
+    together:
+      displayName: Together AI
+      apiKeyEnv: TOGETHER_API_KEY
+      api: openai-completions
+      baseURL: https://api.together.ai/v1
+      models:
+        - id: deepseek-ai/DeepSeek-V3
+```
+
+### Fireworks AI
+
+Fireworks serverless 模型 id 使用 `accounts/fireworks/models/<model>` 格式。请从[模型库](https://fireworks.ai/models)复制当前 id；端点行为由[OpenAI 兼容指南](https://docs.fireworks.ai/tools-sdks/openai-compatibility)说明。
+
+```yaml
+llm-pi-ai:
+  providers:
+    fireworks:
+      displayName: Fireworks AI
+      apiKeyEnv: FIREWORKS_API_KEY
+      api: openai-completions
+      baseURL: https://api.fireworks.ai/inference/v1
+      models:
+        - id: accounts/fireworks/models/your-model
+```
+
+保存后以 `provider/model-id` 选择路由。例如，`pnpm dsh tui --model siliconflow/deepseek-ai/DeepSeek-R1` 会选择上面的 SiliconFlow 配置。模型 id 中的 `/` 在第一个路由分隔符之后仍属于模型 id。
 
 ### 图片输入
 
