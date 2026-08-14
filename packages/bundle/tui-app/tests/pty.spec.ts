@@ -90,8 +90,9 @@ describe('TUI pseudo-terminal process', () => {
     expect(terminal.output()).not.toContain('\u001B[?1049h')
   }, 40_000)
 
-  it('enters and leaves the alternate screen on normal exit', async () => {
-    const terminal = start()
+  it('boots a selected built-in theme and restores the alternate screen', async () => {
+    const terminal = start(['--theme', 'luna'])
+    await terminal.waitFor('Luna Circuit is listening')
     await terminal.waitFor('Ctrl+P commands · Ctrl+T themes')
     await new Promise(resolveWait => setTimeout(resolveWait, 100))
     await terminal.type('/quit')

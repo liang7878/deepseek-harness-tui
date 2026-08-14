@@ -99,7 +99,7 @@ The [model configuration guide](docs/user/guide/providers.md#maas-configuration-
 
 ![Switching between the Sakura Byte and Classic Cyan terminal themes](assets/tui-themes.gif)
 
-Press `Ctrl+T` or run `/theme` to switch among **Classic Cyan**, **Sakura Byte**, **Deep Ocean**, and **Ember Forge**. The selector persists your choice in `~/.dsh/settings.yaml`; `--theme <id>` applies a one-run override. Sakura Byte uses an original anime-inspired welcome canvas designed for this project, not an existing character or franchise.
+Press `Ctrl+T` or run `/theme` to switch among eight built-ins: **Classic Cyan**, **Sakura Byte**, **Deep Ocean**, **Ember Forge**, **Aurora Pulse**, **Luna Circuit**, **Phosphor Grid**, and **Sunset Circuit**. The selector persists your choice in `~/.dsh/settings.yaml`; `--theme <id>` applies a one-run override. Sakura Byte and Luna Circuit use original anime-inspired welcome canvases designed for this project, not existing characters or franchises.
 
 Custom themes load from the same settings file with validated semantic colors, welcome copy, and optional text art. See the [theme configuration contract](packages/bundle/tui-app/README.md#themes) for a complete example. Decorative art appears only on an empty, wide, color-and-Unicode terminal; narrow panes, `NO_COLOR`, `--no-unicode`, and active transcripts retain the compact production layout.
 

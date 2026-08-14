@@ -23,15 +23,33 @@ const customTheme: CustomThemeConfig = {
 }
 
 describe('TUI themes', () => {
-  it('ships distinct classic and anime-inspired built-in themes', () => {
+  it('ships eight distinct built-in themes with bounded welcome canvases', () => {
     const registry = themeRegistry(DEFAULT_TUI_THEME_SETTINGS)
+    expect(registry.map(theme => theme.id)).toEqual([
+      'classic',
+      'sakura',
+      'ocean',
+      'ember',
+      'aurora',
+      'luna',
+      'phosphor',
+      'sunset',
+    ])
     expect(resolveTheme(registry, 'classic').welcome.art).toEqual([])
     expect(resolveTheme(registry, 'sakura')).toMatchObject({
       name: 'Sakura Byte',
       custom: false,
       palette: { accent: 'magenta' },
     })
-    expect(resolveTheme(registry, 'sakura').welcome.art).not.toHaveLength(0)
+    expect(resolveTheme(registry, 'luna')).toMatchObject({
+      name: 'Luna Circuit',
+      custom: false,
+      palette: { accent: '#C4A7FF' },
+    })
+    for (const theme of registry) {
+      expect(theme.welcome.art.length).toBeLessThanOrEqual(10)
+      expect(theme.welcome.art.every(line => Array.from(line).length <= 64)).toBe(true)
+    }
   })
 
   it('resolves a complete custom theme without mutating stored settings', () => {
@@ -115,6 +133,6 @@ describe('TUI themes', () => {
 
   it('reports available ids for an unknown command-line theme', () => {
     expect(() => resolveTheme(themeRegistry(DEFAULT_TUI_THEME_SETTINGS), 'missing'))
-      .toThrow('available: classic, sakura, ocean, ember')
+      .toThrow('available: classic, sakura, ocean, ember, aurora, luna, phosphor, sunset')
   })
 })

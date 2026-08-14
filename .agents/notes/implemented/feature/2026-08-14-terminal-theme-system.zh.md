@@ -10,11 +10,11 @@ Status: implemented
 
 ## Decision
 
-`dsh-tui-app` 持有终端专用 theme registry。内置 `classic`、`sakura`、`ocean` 与 `ember`；`tui` 用户 settings namespace 可以加入完整自定义主题。`--theme` 为单次调用选择初始主题，`Ctrl+T`、`/theme` 与 `/themes` 则复用同一个控制器选择器，并通过 `ctx.settings` 持久化。
+`dsh-tui-app` 持有终端专用 theme registry。内置 `classic`、`sakura`、`ocean`、`ember`、`aurora`、`luna`、`phosphor` 与 `sunset`；`tui` 用户 settings namespace 可以加入完整自定义主题。`--theme` 为单次调用选择初始主题，`Ctrl+T`、`/theme` 与 `/themes` 则复用同一个控制器选择器，并通过 `ctx.settings` 持久化。
 
 解析后的主题包含 accent、success、warning、error 与 muted 语义色，以及空 transcript 的欢迎定义。自定义颜色接受有界 Ink 颜色词汇或六位十六进制值。registry 在 renderer 收到主题前校验 ID、选中引用、registry 数量与字符画尺寸。缺失引用和无效已存 section 会在启动时失败，而不是静默回退。
 
-Sakura Byte 的静态动漫风人物是本项目原创作品，不代表任何现有角色或作品 IP。欢迎字符画不是 transcript 背景：它只在没有可见持久化行时显示，并且要求终端支持颜色、Unicode、至少 84 列及至少 14 行 transcript。活动工作、窄终端、`NO_COLOR` 与 ASCII 模式始终使用紧凑布局。
+Sakura Byte 与 Luna Circuit 使用专为本项目创作的静态动漫风人物，均不代表任何现有角色或作品 IP。欢迎字符画不是 transcript 背景：它只在没有可见持久化行时显示，并且要求终端支持颜色、Unicode、至少 84 列及至少 14 行 transcript。活动工作、窄终端、`NO_COLOR` 与 ASCII 模式始终使用紧凑布局。
 
 ## Ownership
 

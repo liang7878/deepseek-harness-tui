@@ -17,7 +17,7 @@ The startup provider accepts `--resume`, `--cwd`, `--model`, `--theme`, `--inlin
 
 ## Themes
 
-`classic`, `sakura`, `ocean`, and `ember` are built in. `Ctrl+T`, `/theme`, and `/themes` open the selector and persist its choice. `/theme <id>` selects directly. `--theme <id>` overrides startup without changing the saved preference.
+Eight themes are built in: `classic`, `sakura`, `ocean`, `ember`, `aurora`, `luna`, `phosphor`, and `sunset`. `Ctrl+T`, `/theme`, and `/themes` open the selector and persist its choice. `/theme <id>` selects directly. `--theme <id>` overrides startup without changing the saved preference.
 
 The `tui` settings namespace also accepts complete custom themes:
 

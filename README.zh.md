@@ -99,7 +99,7 @@ npx --yes deepseek-harness-tui@latest --model volcengine/your-endpoint-or-model-
 
 ![在 Sakura Byte 与 Classic Cyan 终端主题之间切换](assets/tui-themes.gif)
 
-按 `Ctrl+T` 或运行 `/theme`，即可在 **Classic Cyan**、**Sakura Byte**、**Deep Ocean** 和 **Ember Forge** 之间切换。选择器会将你的选择持久化到 `~/.dsh/settings.yaml`；`--theme <id>` 仅覆盖当前一次运行。Sakura Byte 使用专为本项目创作的原创动漫风欢迎画布，不引用现有角色或作品 IP。
+按 `Ctrl+T` 或运行 `/theme`，即可在八套内置主题间切换：**Classic Cyan**、**Sakura Byte**、**Deep Ocean**、**Ember Forge**、**Aurora Pulse**、**Luna Circuit**、**Phosphor Grid** 和 **Sunset Circuit**。选择器会将你的选择持久化到 `~/.dsh/settings.yaml`；`--theme <id>` 仅覆盖当前一次运行。Sakura Byte 与 Luna Circuit 使用专为本项目创作的原创动漫风欢迎画布，不引用现有角色或作品 IP。
 
 自定义主题从同一 settings 文件加载，支持经过校验的语义色、欢迎文案和可选字符画。完整示例见[主题配置约定](packages/bundle/tui-app/README.md#themes)。装饰画布只在空 transcript、宽窗口且支持颜色与 Unicode 的终端中显示；窄窗格、`NO_COLOR`、`--no-unicode` 和活动 transcript 始终保留紧凑的生产布局。
 

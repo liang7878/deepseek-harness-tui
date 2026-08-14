@@ -17,7 +17,7 @@ dsh tui --theme sakura
 
 ## 主题
 
-内置主题包括 `classic`、`sakura`、`ocean` 与 `ember`。`Ctrl+T`、`/theme` 和 `/themes` 会打开选择器并持久化选择，`/theme <id>` 可直接选择。`--theme <id>` 只覆盖当前启动，不改变已保存偏好。
+八套内置主题包括 `classic`、`sakura`、`ocean`、`ember`、`aurora`、`luna`、`phosphor` 与 `sunset`。`Ctrl+T`、`/theme` 和 `/themes` 会打开选择器并持久化选择，`/theme <id>` 可直接选择。`--theme <id>` 只覆盖当前启动，不改变已保存偏好。
 
 `tui` settings namespace 也接受完整自定义主题：
 

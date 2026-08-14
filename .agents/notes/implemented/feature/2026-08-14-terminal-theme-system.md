@@ -10,11 +10,11 @@ The [terminal application](2026-08-14-terminal-user-interface.md) shipped one fi
 
 ## Decision
 
-`dsh-tui-app` owns a terminal-specific theme registry. `classic`, `sakura`, `ocean`, and `ember` are built in; the `tui` user-settings namespace can add complete custom themes. `--theme` selects an initial theme for one invocation, while `Ctrl+T`, `/theme`, and `/themes` use the same controller selector and persist through `ctx.settings`.
+`dsh-tui-app` owns a terminal-specific theme registry. `classic`, `sakura`, `ocean`, `ember`, `aurora`, `luna`, `phosphor`, and `sunset` are built in; the `tui` user-settings namespace can add complete custom themes. `--theme` selects an initial theme for one invocation, while `Ctrl+T`, `/theme`, and `/themes` use the same controller selector and persist through `ctx.settings`.
 
 A resolved theme contains semantic accent, success, warning, error, and muted colors plus an empty-transcript welcome definition. Custom colors accept the bounded Ink color vocabulary or six-digit hexadecimal values. Registration validates ids, selected references, registry size, and art dimensions before the renderer receives a theme. Missing references and invalid stored sections fail during startup rather than falling back silently.
 
-Sakura Byte's static anime-inspired figure is original project artwork and does not represent an existing character or franchise. Welcome art is not transcript background: it appears only while no durable rows are visible, and only when the terminal has color, Unicode, at least 84 columns, and at least 14 transcript rows. Active work, narrow terminals, `NO_COLOR`, and ASCII mode always use the compact layout.
+Sakura Byte and Luna Circuit use static anime-inspired figures created for this project; neither represents an existing character or franchise. Welcome art is not transcript background: it appears only while no durable rows are visible, and only when the terminal has color, Unicode, at least 84 columns, and at least 14 transcript rows. Active work, narrow terminals, `NO_COLOR`, and ASCII mode always use the compact layout.
 
 ## Ownership
 

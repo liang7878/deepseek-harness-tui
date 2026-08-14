@@ -80,9 +80,12 @@ ctx.provide('appExit', (code: number) => {
   setImmediate(() => void ctx.fiber.dispose())
 })
 
+const themeAt = process.argv.indexOf('--theme')
+const theme = themeAt < 0 ? undefined : process.argv[themeAt + 1]
 apply(ctx, {
   cwd: process.cwd(),
   model: 'demo/scripted',
+  ...theme === undefined ? {} : { theme },
   inline: process.argv.includes('--inline'),
   color: false,
   unicode: !process.argv.includes('--no-unicode'),
