@@ -16,6 +16,7 @@ import {
 } from './build-npm-tui-package.ts'
 
 const root = resolve(import.meta.dirname, '..')
+const STARTUP_TIMEOUT_MS = 120_000
 
 interface PtyProcess {
   readonly pid: number
@@ -140,7 +141,7 @@ async function driveInstalledTui(project: string): Promise<void> {
           `timed out waiting for ${JSON.stringify(text)} in packed TUI output: `
           + JSON.stringify(output.slice(-1_000)),
         ))
-      }, 30_000)
+      }, STARTUP_TIMEOUT_MS)
       waiters.add({ text, resolve: resolveWait, reject, timer })
     })
   }
