@@ -1,152 +1,104 @@
-<div align="center">
-
 # DeepSeek Harness TUI
 
-**A production-ready AI coding agent for developers who live in the terminal.**
+<p align="center">
+  <strong>A focused terminal workspace for the official DeepSeek Harness engine.</strong><br>
+  Sessions, tools, approvals, models, themes, and durable history—without cloning the Harness monorepo.
+</p>
 
-[中文](README.zh.md)
+<p align="center">
+  <a href="https://github.com/liang7878/deepseek-harness-tui/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/liang7878/deepseek-harness-tui/ci.yml?branch=main"></a>
+  <a href="https://www.npmjs.com/package/deepseek-harness-tui"><img alt="npm" src="https://img.shields.io/npm/v/deepseek-harness-tui"></a>
+  <img alt="Node" src="https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24-339933">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-111827">
+</p>
 
-[![Node.js 22+](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)](package.json) [![macOS](https://img.shields.io/badge/macOS-supported-111111?logo=apple)](packages/bundle/tui-app/README.md) [![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=111111)](packages/bundle/tui-app/README.md) [![Windows](https://img.shields.io/badge/Windows-supported-0078D4?logo=windows)](packages/bundle/tui-app/README.md) [![License: MIT](https://img.shields.io/badge/License-MIT-6E56CF.svg)](LICENSE)
+![DeepSeek Harness TUI demo](assets/tui-demo.gif)
 
-Run DeepSeek, Volcengine Ark, or any OpenAI-compatible model with streaming tools, approval controls, durable sessions, and switchable themes—inside the real Harness runtime.
+## Run it
 
-</div>
-
-![DeepSeek Harness TUI running a real conversation through the Volcengine Ark API](assets/tui-demo.gif)
-
-## Built for real work
-
-DeepSeek Harness TUI is a complete coding workspace, not a chat box in a terminal. Ask it to inspect a repository, edit files, run commands, and carry a task across multiple turns while you supervise tool calls, diffs, approvals, and failures in real time.
-
-The TUI runs inside the same plugin-composed Host as the Agent, Session, tools, commands, and persistence services. There is no browser, localhost bridge, or reduced agent implementation between you and the runtime.
-
-- **Real coding workflow** — multi-turn sessions, live steering, cancellation, tools, diffs, Todo progress, commands, approvals, and structured questions.
-- **Durable by design** — settled output is projected from the authoritative Session log; resume work after closing the terminal.
-- **Transparent but focused** — tool actions and failures stay visible while raw reasoning and internal runtime context remain collapsed.
-- **Terminal-native** — Unicode editing, multiline input, paste, history, transcript paging, narrow panes, `NO_COLOR`, ASCII fallback, and reliable terminal restoration.
-- **Provider-flexible** — use DeepSeek, Volcengine Ark, OpenAI-compatible gateways, or any provider supported by the Harness model registry.
-- **Cross-platform** — macOS, Linux, Windows Terminal, SSH, tmux, and other VT-compatible terminals.
-
-<a id="run"></a>
-
-## Quick start
-
-Prerequisites: Node.js `^22.19` or `>=24` and a model-provider credential.
-
-```sh
-export DEEPSEEK_API_KEY="your-key"
+```bash
 npx --yes deepseek-harness-tui@latest
 ```
 
-The current directory becomes the workspace. The npx launcher forwards every TUI argument:
+The npm package selects a prebuilt runtime for macOS, Linux, or Windows. Users do not need the Harness source tree, a submodule, pnpm, or a native compiler.
 
-```sh
-npx --yes deepseek-harness-tui@latest --cwd ../your-project
-npx --yes deepseek-harness-tui@latest --model deepseek-official/deepseek-v4-flash
-npx --yes deepseek-harness-tui@latest --resume <session-id>
-npx --yes deepseek-harness-tui@latest --theme sakura
+```bash
+npx deepseek-harness-tui --cwd ./project
+npx deepseek-harness-tui --model deepseek-official/deepseek-v4-flash
+npx deepseek-harness-tui --resume <session-id>
+npx deepseek-harness-tui --theme luna
 ```
 
-For a global installation:
+Configure providers with the same environment variables and settings used by DeepSeek Harness. For the official API:
 
-```sh
-npm install --global deepseek-harness-tui@latest
-dsh-tui --theme sakura
-```
-
-<a id="run-from-source"></a>
-
-### Run from source
-
-Source development requires pnpm:
-
-```sh
-git clone https://github.com/liang7878/deepseek-harness-tui.git
-cd deepseek-harness-tui
-pnpm install
-pnpm run build
-
+```bash
 export DEEPSEEK_API_KEY="your-key"
-pnpm dsh tui
+npx deepseek-harness-tui
 ```
 
-## MaaS providers
+OpenAI-compatible MaaS endpoints can use `DEEPSEEK_BASE_URL` together with the provider configuration in your Harness settings.
 
-Add an OpenAI-compatible route to `~/.dsh/settings.yaml`. The base URL stops at `/api/v3`; the adapter appends the request path.
+## What it includes
 
-```yaml
-llm-pi-ai:
-  providers:
-    volcengine:
-      displayName: Volcengine Ark
-      apiKeyEnv: ARK_API_KEY
-      api: openai-completions
-      baseURL: https://ark.cn-beijing.volces.com/api/v3
-      models:
-        - id: your-endpoint-or-model-id
-```
+- Durable sessions with create, resume, switch, and transcript pagination
+- Multi-turn follow-up, steering, cancellation, and model selection
+- Tool calls, approvals, structured questions, todos, and command discovery
+- Alternate-screen lifecycle, real PTY behavior, Unicode and ASCII fallbacks
+- Eight built-in themes plus persisted custom themes
+- macOS arm64/x64, Linux arm64/x64, and Windows x64 runtime packages
 
-```sh
-export ARK_API_KEY="your-key"
-npx --yes deepseek-harness-tui@latest --model volcengine/your-endpoint-or-model-id
-```
+![Theme selector](assets/tui-themes.gif)
 
-Secrets remain in the environment or the Harness credential store; settings contain only credential references.
+Use `Ctrl+T` or `/themes` to switch among Classic, Sakura Byte, Ocean, Ember, Aurora Pulse, Luna Circuit, Phosphor Grid, and Sunset Circuit.
 
-The [model configuration guide](docs/user/guide/providers.md#maas-configuration-recipes) includes ready-to-copy recipes for Volcengine Ark, SiliconFlow, OpenRouter, Alibaba Cloud Model Studio, Together AI, and Fireworks AI.
+## Independent by design
 
-## Themes
-
-![Switching between the Sakura Byte and Classic Cyan terminal themes](assets/tui-themes.gif)
-
-Press `Ctrl+T` or run `/theme` to switch among eight built-ins: **Classic Cyan**, **Sakura Byte**, **Deep Ocean**, **Ember Forge**, **Aurora Pulse**, **Luna Circuit**, **Phosphor Grid**, and **Sunset Circuit**. The selector persists your choice in `~/.dsh/settings.yaml`; `--theme <id>` applies a one-run override. Sakura Byte and Luna Circuit use original anime-inspired welcome canvases designed for this project, not existing characters or franchises.
-
-Custom themes load from the same settings file with validated semantic colors, welcome copy, and optional text art. See the [theme configuration contract](packages/bundle/tui-app/README.md#themes) for a complete example. Decorative art appears only on an empty, wide, color-and-Unicode terminal; narrow panes, `NO_COLOR`, `--no-unicode`, and active transcripts retain the compact production layout.
-
-## Keyboard workflow
-
-| Key | Action |
-|---|---|
-| `Enter` | Send a follow-up, or steer the running Agent. |
-| `Ctrl+J` | Insert a newline. |
-| `Ctrl+C` | Cancel active work; exit while idle. |
-| `Ctrl+O` | Browse persisted sessions. |
-| `Ctrl+L` | Select a provider and model. |
-| `Ctrl+T` | Select and persist a terminal theme. |
-| `Ctrl+P` | Browse commands. |
-| `PageUp` / `PageDown` | Page the transcript. |
-| `Ctrl+E` | Return to the live tail. |
-| `Esc` | Close or cancel the active interaction. |
-
-Local commands include `/new`, `/resume`, `/sessions`, `/model`, `/models`, `/theme`, `/themes`, `/commands`, `/help`, and `/quit`. Plugin-contributed slash commands appear in the same command palette.
-
-## Architecture
-
-DeepSeek Harness is built on [Cordis](https://github.com/cordiverse/cordis): **everything is a plugin**. The TUI is a first-party profile over `dsh-base`, not a fork of the agent loop. It consumes public services directly and adds one Host-owned presentation layer:
+This repository does **not** fork or copy the DeepSeek Harness source tree. The TUI lives at the repository root; the official engine is pinned as a Git submodule under `vendor/deepseek-harness` only for reproducible builds.
 
 ```text
-dsh tui
-  └─ profile: dsh-base + dsh-tui-app
-       ├─ Agent / Session / model registry
-       ├─ tools / commands / approvals / questions
-       ├─ persistence / sandbox / shell / filesystem
-       └─ Ink renderer + TUI controller
+TUI source ── adapter/profile overlay ── pinned Harness engine
+    │                                      │
+    └──────── prebuilt platform runtime ───┘
 ```
 
-Read the [TUI package contract](packages/bundle/tui-app/README.md), [product specification](apps/cli/PRODUCT.md), [interaction design](apps/cli/DESIGN.md), and [Harness architecture](docs/architecture.md).
+The boundary has three useful properties:
 
-## Quality
+1. Users install one prebuilt package and never interact with the submodule.
+2. Dependabot proposes upstream commit updates automatically; CI builds the TUI against each proposed revision.
+3. TUI releases pin an exact tested Harness commit, so an upstream change cannot silently break an installed version.
 
-The release path exercises focused unit and integration tests, a real Loader composition, a real pseudo-terminal process with Unicode input, terminal-state restoration, TypeScript strict mode, lint, package hygiene, documentation synchronization, and built-profile smokes. The animated screenshot above is recorded from the real application and Volcengine model flow.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the update and release model.
 
-## Project status
+## Develop
 
-This repository tracks a production-oriented TUI distribution on top of the pre-release DeepSeek Harness codebase. Harness storage and package formats may still change before the first stable upstream release; the TUI fails loudly rather than silently translating obsolete formats.
+```bash
+git clone --recurse-submodules https://github.com/liang7878/deepseek-harness-tui.git
+cd deepseek-harness-tui
+CI=true pnpm install --frozen-lockfile
+npm run check
+```
 
-## Credits
+To test a new Harness revision:
 
-Built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), developed by [DeepSeek AI](https://deepseek.com), and rendered with [Ink](https://github.com/vadimdemedes/ink). Cordis composability is described in [_A Programming Paradigm for Spatiotemporal Composability_](https://github.com/cordiverse/paper).
+```bash
+git -C vendor/deepseek-harness fetch origin
+git -C vendor/deepseek-harness checkout origin/master
+CI=true pnpm install --no-frozen-lockfile
+npm run check
+```
 
-## License
+Commit the submodule pointer and refreshed lockfile only after compatibility checks pass.
 
-[MIT](LICENSE). Third-party notices are available in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+---
+
+## 中文
+
+DeepSeek Harness TUI 是一个独立发布、可直接通过 `npx` 使用的终端 Coding Agent。用户无需克隆 Harness、初始化 submodule、安装 pnpm 或编译原生依赖。
+
+```bash
+npx --yes deepseek-harness-tui@latest
+```
+
+仓库只保留 TUI、适配层和发行脚本；官方 DeepSeek Harness 以固定 commit 的 submodule 参与构建。Dependabot 自动提交上游升级 PR，CI 验证兼容性，最终发布物则包含经过验证的跨平台运行时。因此既能持续跟进上游，又不会把维护复杂度转嫁给用户。
+
+MIT © DeepSeek Harness TUI contributors

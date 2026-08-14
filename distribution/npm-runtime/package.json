@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "deepseek-harness-tui": "workspace:*",
     "@deepseek-ai/cordis": "workspace:^",
     "@deepseek-ai/cordis-plugin-group": "workspace:^",
     "@deepseek-ai/cordis-plugin-include": "workspace:^",

@@ -26,7 +26,7 @@ export function platformPackageName(distribution, platform, arch) {
   return packageName
 }
 
-/** Locate the real dsh JavaScript entry inside the installed platform closure. */
+/** Locate the standalone launcher inside the installed platform closure. */
 export function resolveRuntimeCli(options = {}) {
   const distribution = options.manifest ?? manifest
   const platform = options.platform ?? process.platform
@@ -43,7 +43,7 @@ export function resolveRuntimeCli(options = {}) {
       + 'reinstall deepseek-harness-tui without disabling optional dependencies',
     )
   }
-  const cli = join(dirname(packageJson), 'runtime', 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
+  const cli = join(dirname(packageJson), 'runtime', 'node_modules', 'deepseek-harness-tui', 'launcher.mjs')
   const fileExists = options.fileExists ?? existsSync
   if (!fileExists(cli)) {
     throw new Error(`platform package ${packageName} is incomplete: missing ${cli}`)
@@ -51,7 +51,7 @@ export function resolveRuntimeCli(options = {}) {
   return { packageName, cli }
 }
 
-/** Run dsh in TUI mode and return the child exit status. */
+/** Run the packaged standalone TUI and return the child exit status. */
 export function runLauncher(args, options = {}) {
   const writeError = options.writeError ?? (message => process.stderr.write(`${message}\n`))
   let resolved
@@ -65,7 +65,6 @@ export function runLauncher(args, options = {}) {
   const spawn = options.spawn ?? spawnSync
   const result = spawn(options.execPath ?? process.execPath, [
     resolved.cli,
-    'tui',
     ...normalizeLauncherArgs(args),
   ], {
     stdio: 'inherit',

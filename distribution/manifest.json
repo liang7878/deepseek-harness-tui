@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0-rc.1",
-  "description": "DeepSeek Harness TUI with a prebuilt platform runtime closure",
+  "version": "0.2.0-rc.1",
+  "description": "Standalone TUI over a pinned, prebuilt official DeepSeek Harness engine",
   "metaPackage": "deepseek-harness-tui",
   "platformPackages": {
     "darwin-arm64": "deepseek-harness-tui-darwin-arm64",

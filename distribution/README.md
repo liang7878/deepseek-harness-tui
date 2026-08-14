@@ -1,8 +1,6 @@
 # DeepSeek Harness TUI npm distribution
 
-English | [中文](README.zh.md)
-
-This directory owns the unscoped npm distribution for the fork. The generated packages run the real built `@deepseek-ai/dsh` CLI in `tui` mode; users do not clone this repository or build native dependencies.
+This directory owns the unscoped npm distribution for the standalone TUI. The generated packages carry the tested closure of the pinned official Harness submodule; users do not clone either repository or build native dependencies.
 
 ## Install and run
 
@@ -48,10 +46,10 @@ Each platform package contains a production `pnpm deploy` closure generated on t
 The checked-in [manifest](manifest.json) owns the public package names, version, engines, description, license, and repository metadata. Generated package directories and tarballs stay under `.artifacts/` and are not workspace members.
 
 ```sh
-pnpm run pack:npm-tui
-pnpm run pack:npm-tui -- --platform linux --arch x64 --platform-only
-pnpm run pack:npm-tui -- --meta-only
-pnpm run verify:npm-tui-packed-install
+npm run pack:tui
+npm run pack:tui -- --platform linux --arch x64 --platform-only
+npm run pack:tui -- --meta-only
+npm run verify:packed
 ```
 
 The host default builds its platform tarball and the meta tarball. The packed-install smoke is artifact-dependent: it installs both tarballs into an isolated project, starts `dsh-tui --theme sakura` through a PTY, waits for the Sakura composer, and exits through `/quit`.

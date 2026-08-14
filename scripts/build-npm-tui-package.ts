@@ -21,11 +21,14 @@ import {
   writeFile,
 } from 'node:fs/promises'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { gunzipSync, gzipSync } from 'node:zlib'
 
 const root = resolve(import.meta.dirname, '..')
+const require = createRequire(import.meta.url)
+process.env.pnpm_config_verify_deps_before_run = 'false'
 const distributionRoot = join(root, 'distribution')
 const distributionManifestPath = join(distributionRoot, 'manifest.json')
 const deployManifestPath = join(distributionRoot, 'npm-runtime', 'package.json')
@@ -90,10 +93,10 @@ export function resolvePnpmInvocation(
   entrypoint: string | undefined,
   args: readonly string[],
 ): { command: string; args: string[] } {
-  if (entrypoint === undefined || entrypoint === '') {
-    throw new Error('pnpm entrypoint is unavailable; invoke the builder through a pnpm package script.')
-  }
-  return { command: process.execPath, args: [entrypoint, ...args] }
+  const pnpmEntrypoint = entrypoint?.includes('pnpm')
+    ? entrypoint
+    : join(dirname(require.resolve('pnpm')), 'bin', 'pnpm.cjs')
+  return { command: process.execPath, args: [pnpmEntrypoint, ...args] }
 }
 
 /**
@@ -600,8 +603,8 @@ async function buildPlatformPackage(
     await restoreLegacyHoists(runtime)
     await materializeSymlinks(runtime)
     await prepareNativeRuntime(runtime, target)
-    const cli = join(runtime, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
-    if (!existsSync(cli)) throw new Error(`deployed dsh CLI is missing at ${cli}; build the host libraries first.`)
+    const cli = join(runtime, 'node_modules', 'deepseek-harness-tui', 'launcher.mjs')
+    if (!existsSync(cli)) throw new Error(`deployed TUI launcher is missing at ${cli}; build the runtime first.`)
     await writeJson(join(stage, 'package.json'), generatePlatformPackageManifest(manifest, target))
     await copyPackageFiles(stage, true)
     if (await findSymlink(stage) !== undefined) throw new Error(`platform stage ${stage} contains a symbolic link.`)

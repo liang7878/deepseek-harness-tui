@@ -105,6 +105,9 @@ describe('npm TUI package builder', () => {
       command: process.execPath,
       args: ['/tools/pnpm.cjs', 'run', 'build'],
     })
-    expect(() => resolvePnpmInvocation(undefined, [])).toThrow(/pnpm entrypoint is unavailable/)
+    const bundled = resolvePnpmInvocation(undefined, ['install'])
+    expect(bundled.command).toBe(process.execPath)
+    expect(bundled.args[0]).toMatch(/pnpm[/\\]bin[/\\]pnpm\.cjs$/)
+    expect(bundled.args.slice(1)).toEqual(['install'])
   })
 })

@@ -20,7 +20,7 @@ describe('npm TUI launcher', () => {
     expect(normalizeLauncherArgs(['--theme', 'sakura'])).toEqual(['--theme', 'sakura'])
   })
 
-  it('resolves the real dsh CLI inside the native optional package', () => {
+  it('resolves the standalone launcher inside the native optional package', () => {
     expect(resolveRuntimeCli({
       manifest,
       platform: 'darwin',
@@ -33,10 +33,8 @@ describe('npm TUI launcher', () => {
         '/install/node_modules/deepseek-harness-tui-darwin-arm64',
         'runtime',
         'node_modules',
-        '@deepseek-ai',
-        'dsh',
-        'lib',
-        'bin.js',
+        'deepseek-harness-tui',
+        'launcher.mjs',
       ),
     })
   })
@@ -81,8 +79,7 @@ describe('npm TUI launcher', () => {
       spawn,
     })).toBe(7)
     expect(spawn).toHaveBeenCalledWith('/node', [
-      join('/install/platform', 'runtime', 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js'),
-      'tui',
+      join('/install/platform', 'runtime', 'node_modules', 'deepseek-harness-tui', 'launcher.mjs'),
       '--theme',
       'sakura',
     ], expect.objectContaining({ stdio: 'inherit' }))
