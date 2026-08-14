@@ -16,7 +16,6 @@ import {
 } from './build-npm-tui-package.ts'
 
 const root = resolve(import.meta.dirname, '..')
-const STARTUP_TIMEOUT_MS = 120_000
 
 interface PtyProcess {
   readonly pid: number
@@ -89,9 +88,9 @@ async function driveInstalledTui(project: string): Promise<void> {
   const env = Object.fromEntries(
     Object.entries({
       ...process.env,
+      CI: undefined,
       DSH_HOME: dshHome,
       DSH_TELEMETRY_DISABLED: '1',
-      DSH_TUI_STARTUP_DIAGNOSTICS: '1',
       TERM: 'xterm-256color',
       NO_COLOR: undefined,
     }).filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
@@ -142,7 +141,7 @@ async function driveInstalledTui(project: string): Promise<void> {
           `timed out waiting for ${JSON.stringify(text)} in packed TUI output: `
           + JSON.stringify(output.slice(-1_000)),
         ))
-      }, STARTUP_TIMEOUT_MS)
+      }, 30_000)
       waiters.add({ text, resolve: resolveWait, reject, timer })
     })
   }
