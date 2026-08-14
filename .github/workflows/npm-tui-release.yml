@@ -70,7 +70,18 @@ jobs:
           MANYLINUX_IMAGE: ${{ matrix.manylinux }}
         run: |
           set -euo pipefail
-          addon_dir="$(realpath packages/subprocess/subprocess-local/node_modules/node-pty)"
+          native_root="$PWD/.artifacts/npm-tui-native-build"
+          rm -rf "$native_root"
+          pnpm --filter dsh-tui-npm-runtime deploy \
+            --legacy \
+            --prod \
+            --config.node-linker=hoisted \
+            --config.auto-install-peers=false \
+            --config.link-workspace-packages=true \
+            --config.confirmModulesPurge=false \
+            "$native_root"
+          npm rebuild node-pty --build-from-source --prefix "$native_root"
+          addon_dir="$(realpath "$native_root/node_modules/node-pty")"
           addon="$addon_dir/build/Release/pty.node"
           test -f "$addon_dir/build/Makefile" || {
             echo "::error::node-pty install did not generate $addon_dir/build/Makefile"
@@ -86,6 +97,9 @@ jobs:
             bash -euxo pipefail -c \
               'rm -rf build/Release && make -C build -j2 BUILDTYPE=Release'
           test -f "$addon" || { echo "::error::$addon missing after manylinux rebuild"; exit 1; }
+          workspace_addon_dir="$(realpath packages/subprocess/subprocess-local/node_modules/node-pty)/build/Release"
+          mkdir -p "$workspace_addon_dir"
+          cp "$addon" "$workspace_addon_dir/pty.node"
 
       - name: Build platform tarball
         run: >-
