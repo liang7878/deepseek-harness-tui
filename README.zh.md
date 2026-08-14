@@ -2,21 +2,23 @@
 
 # DeepSeek Harness TUI
 
-**真正可用于生产的 coding agent（编程智能体），就在你工作的终端里。**
+**为终端深度用户打造的生产级 AI coding agent（编程智能体）。**
 
 [English](README.md)
 
 [![Node.js 22+](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)](package.json) [![macOS](https://img.shields.io/badge/macOS-supported-111111?logo=apple)](packages/bundle/tui-app/README.md) [![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=111111)](packages/bundle/tui-app/README.md) [![Windows](https://img.shields.io/badge/Windows-supported-0078D4?logo=windows)](packages/bundle/tui-app/README.md) [![License: MIT](https://img.shields.io/badge/License-MIT-6E56CF.svg)](LICENSE)
 
-监督流式工作、检查每次工具操作、回答审批、切换模型并恢复持久化 Session，全程无需离开 shell。
+通过真实 Harness runtime 运行 DeepSeek、火山方舟或任意 OpenAI 兼容模型，并获得流式工具、审批控制、持久化 Session 与可切换主题。
 
 </div>
 
 ![DeepSeek Harness TUI 通过火山方舟 API 运行真实对话](assets/tui-demo.gif)
 
-## 为什么选择这个 TUI
+## 为真实工作而生
 
-大多数终端 agent 都是在远程协议外再包一层独立客户端。DeepSeek Harness TUI 与 Agent、Session、工具、审批、命令和持久化服务运行在同一个插件组合 Host 中。你与 runtime 之间没有浏览器、localhost server 或功能缩水的 agent 实现。
+DeepSeek Harness TUI 是完整的编码工作空间，而不是终端里的聊天框。你可以让它检查仓库、编辑文件、运行命令并通过多轮交互完成任务，同时实时监督工具调用、diff、审批和失败。
+
+TUI 与 Agent、Session、工具、命令和持久化服务运行在同一个插件组合 Host 中。你与 runtime 之间没有浏览器、localhost bridge 或功能缩水的 agent 实现。
 
 - **真实编码工作流**：多轮 Session、实时 steering（中途引导）、取消、工具、diff、Todo 进度、命令、审批和结构化问题。
 - **持久性内建**：已结算输出从权威 Session 日志投影；关闭终端后仍可恢复工作。

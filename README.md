@@ -2,21 +2,23 @@
 
 # DeepSeek Harness TUI
 
-**A production-grade coding agent that lives where you work: the terminal.**
+**A production-ready AI coding agent for developers who live in the terminal.**
 
 [中文](README.zh.md)
 
 [![Node.js 22+](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)](package.json) [![macOS](https://img.shields.io/badge/macOS-supported-111111?logo=apple)](packages/bundle/tui-app/README.md) [![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=111111)](packages/bundle/tui-app/README.md) [![Windows](https://img.shields.io/badge/Windows-supported-0078D4?logo=windows)](packages/bundle/tui-app/README.md) [![License: MIT](https://img.shields.io/badge/License-MIT-6E56CF.svg)](LICENSE)
 
-Supervise streaming work, inspect every tool action, answer approvals, switch models, and resume durable sessions without leaving your shell.
+Run DeepSeek, Volcengine Ark, or any OpenAI-compatible model with streaming tools, approval controls, durable sessions, and switchable themes—inside the real Harness runtime.
 
 </div>
 
 ![DeepSeek Harness TUI running a real conversation through the Volcengine Ark API](assets/tui-demo.gif)
 
-## Why this TUI
+## Built for real work
 
-Most terminal agents are a separate client wrapped around a remote protocol. DeepSeek Harness TUI runs inside the same plugin-composed Host as the Agent, Session, tools, approvals, commands, and persistence services. There is no browser, localhost server, or reduced agent implementation between you and the runtime.
+DeepSeek Harness TUI is a complete coding workspace, not a chat box in a terminal. Ask it to inspect a repository, edit files, run commands, and carry a task across multiple turns while you supervise tool calls, diffs, approvals, and failures in real time.
+
+The TUI runs inside the same plugin-composed Host as the Agent, Session, tools, commands, and persistence services. There is no browser, localhost bridge, or reduced agent implementation between you and the runtime.
 
 - **Real coding workflow** — multi-turn sessions, live steering, cancellation, tools, diffs, Todo progress, commands, approvals, and structured questions.
 - **Durable by design** — settled output is projected from the authoritative Session log; resume work after closing the terminal.
