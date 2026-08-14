@@ -99,9 +99,13 @@ jobs:
             bash -euxo pipefail -c \
               'rm -rf build/Release && make -C build -j2 BUILDTYPE=Release'
           test -f "$addon" || { echo "::error::$addon missing after manylinux rebuild"; exit 1; }
+          compiled_addon="$PWD/.artifacts/npm-tui-native-addon/pty.node"
+          mkdir -p "$(dirname "$compiled_addon")"
+          cp "$addon" "$compiled_addon"
+          pnpm install --frozen-lockfile --config.confirmModulesPurge=false
           workspace_addon_dir="$(realpath packages/subprocess/subprocess-local/node_modules/node-pty)/build/Release"
           mkdir -p "$workspace_addon_dir"
-          cp "$addon" "$workspace_addon_dir/pty.node"
+          cp "$compiled_addon" "$workspace_addon_dir/pty.node"
 
       - name: Build platform tarball
         run: >-
