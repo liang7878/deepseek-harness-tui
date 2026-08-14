@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0-rc.1",
+  "description": "Standalone TUI over a pinned, prebuilt official DeepSeek Harness engine",
+  "metaPackage": "deepseek-harness-tui",
+  "platformPackages": {
+    "darwin-arm64": "deepseek-harness-tui-darwin-arm64",
+    "darwin-x64": "deepseek-harness-tui-darwin-x64",
+    "linux-arm64": "deepseek-harness-tui-linux-arm64",
+    "linux-x64": "deepseek-harness-tui-linux-x64",
+    "win32-x64": "deepseek-harness-tui-win32-x64"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liang7878/deepseek-harness-tui.git",
+    "directory": "distribution"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "name": "deepseek-harness-tui",
+  "version": "0.2.0-rc.1",
+  "description": "A polished, themeable terminal interface for the official DeepSeek Harness engine",
+  "type": "module",
+  "bin": {
+    "deepseek-harness-tui": "launcher.mjs",
+    "dsh-tui": "launcher.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./startup": {
+      "types": "./dist/startup.d.ts",
+      "default": "./dist/startup.js"
+    },
+    "./invariant": {
+      "types": "./dist/invariant.d.ts",
+      "default": "./dist/invariant.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "cordis.patch.yml",
+    "launcher.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run build:lib:host",
+    "build:engine": "cd vendor/deepseek-harness && ../../node_modules/.bin/tsc -b tsconfig.host.json && ../../node_modules/.bin/tsdown --env.DSH_BUILD_FACE host && ../../node_modules/.bin/tsc -b tsconfig.client.json && ../../node_modules/.bin/tsdown --env.DSH_BUILD_FACE client",
+    "build:lib:host": "npm run build:engine && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test && npm run build && npm pack --dry-run",
+    "pack:tui": "tsx scripts/build-npm-tui-package.ts",
+    "verify:packed": "tsx scripts/verify-packed-npm-tui-install.ts",
+    "publish:tui": "tsx scripts/publish-npm-tui-packages.ts",
+    "start": "node launcher.mjs"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "coding-agent",
+    "terminal",
+    "tui",
+    "ink",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liang7878/deepseek-harness-tui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liang7878/deepseek-harness-tui/issues"
+  },
+  "homepage": "https://github.com/liang7878/deepseek-harness-tui#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
+    "@deepseek-ai/dsh": "workspace:^",
+    "@deepseek-ai/dsh-agent": "workspace:^",
+    "@deepseek-ai/dsh-agent-default-model": "workspace:^",
+    "@deepseek-ai/dsh-app-boot": "workspace:^",
+    "@deepseek-ai/dsh-cmdline": "workspace:^",
+    "@deepseek-ai/dsh-code-runtime-worker-thread": "workspace:^",
+    "@deepseek-ai/dsh-commands": "workspace:^",
+    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@deepseek-ai/dsh-llm": "workspace:^",
+    "@deepseek-ai/dsh-session": "workspace:^",
+    "@deepseek-ai/dsh-session-persistence": "workspace:^",
+    "@deepseek-ai/dsh-settings": "workspace:^",
+    "@deepseek-ai/dsh-tools": "workspace:^",
+    "@deepseek-ai/dsh-user-approval": "workspace:^",
+    "@deepseek-ai/dsh-user-questions": "workspace:^",
+    "@deepseek-ai/schemastery": "workspace:^",
+    "commander": "^15.0.0",
+    "ink": "5.2.1",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.11",
+    "@types/react": "~18.3.1",
+    "pnpm": "11.7.0",
+    "tsx": "^4.21.0",
+    "tsdown": "0.22.2",
+    "typescript": "^6.0.3",
+    "unrun": "0.3.1",
+    "vitest": "^4.0.18"
+  },
+  "packageManager": "pnpm@11.7.0"
+}
