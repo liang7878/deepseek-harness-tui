@@ -1,5 +1,7 @@
 # DeepSeek Harness TUI
 
+[中文](README.zh.md)
+
 <p align="center">
   <strong>A focused terminal workspace for the official DeepSeek Harness engine.</strong><br>
   Sessions, tools, approvals, models, themes, and durable history—without cloning the Harness monorepo.
@@ -89,16 +91,4 @@ npm run check
 
 Commit the submodule pointer and refreshed lockfile only after compatibility checks pass.
 
----
-
-## 中文
-
-DeepSeek Harness TUI 是一个独立发布、可直接通过 `npx` 使用的终端 Coding Agent。用户无需克隆 Harness、初始化 submodule、安装 pnpm 或编译原生依赖。
-
-```bash
-npx --yes deepseek-harness-tui@latest
-```
-
-仓库只保留 TUI、适配层和发行脚本；官方 DeepSeek Harness 以固定 commit 的 submodule 参与构建。Dependabot 自动提交上游升级 PR，CI 验证兼容性，最终发布物则包含经过验证的跨平台运行时。因此既能持续跟进上游，又不会把维护复杂度转嫁给用户。
-
-MIT © DeepSeek Harness TUI contributors
+MIT © [liang7878](https://github.com/liang7878)
