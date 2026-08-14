@@ -71,6 +71,12 @@ interface RunningTui {
   stopped: boolean
 }
 
+function startupDiagnostic(stage: string): void {
+  if (process.env.DSH_TUI_STARTUP_DIAGNOSTICS === '1') {
+    internals.stderr.write(`[dsh-tui-startup] ${stage}\n`)
+  }
+}
+
 async function stop(running: RunningTui): Promise<void> {
   if (running.stopped) return
   running.stopped = true
@@ -86,6 +92,7 @@ function isStopped(running: RunningTui): boolean {
 async function run(ctx: Context, config: Config, running: RunningTui): Promise<void> {
   const loader: { await(): Promise<void> } | undefined = ctx.get('loader')
   await loader?.await()
+  startupDiagnostic('loader ready')
   if (running.stopped) return
   if (!internals.stdin.isTTY || !internals.stdout.isTTY) {
     throw new Error('tui requires an interactive terminal; use `dsh --profile headless \"task\"` for redirected input or output')
@@ -95,9 +102,11 @@ async function run(ctx: Context, config: Config, running: RunningTui): Promise<v
   }
 
   running.terminal.enter()
+  startupDiagnostic('terminal entered')
   const controller = new TuiController(ctx, config)
   running.controller = controller
   await controller.start()
+  startupDiagnostic('controller ready')
   if (isStopped(running)) return
   const instance = render(createElement(TuiApp, {
     controller,
@@ -110,6 +119,7 @@ async function run(ctx: Context, config: Config, running: RunningTui): Promise<v
     exitOnCtrlC: false,
     patchConsole: false,
   })
+  startupDiagnostic('renderer mounted')
   running.instance = instance
   await instance.waitUntilExit()
   await stop(running)

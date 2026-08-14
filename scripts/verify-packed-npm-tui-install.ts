@@ -91,6 +91,7 @@ async function driveInstalledTui(project: string): Promise<void> {
       ...process.env,
       DSH_HOME: dshHome,
       DSH_TELEMETRY_DISABLED: '1',
+      DSH_TUI_STARTUP_DIAGNOSTICS: '1',
       TERM: 'xterm-256color',
       NO_COLOR: undefined,
     }).filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
