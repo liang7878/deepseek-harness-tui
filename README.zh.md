@@ -27,11 +27,38 @@ TUI 与 Agent、Session、工具、命令和持久化服务运行在同一个插
 - **提供方灵活**：使用 DeepSeek、火山方舟、OpenAI 兼容 gateway，或 Harness 模型 registry 支持的任意提供方。
 - **跨平台**：支持 macOS、Linux、Windows Terminal、SSH、tmux 和其他兼容 VT 的终端。
 
-<a id="run"></a> <a id="run-from-source"></a>
+<a id="run"></a>
 
 ## 快速开始
 
-前置条件：Node.js `^22.19` 或 `>=24`、pnpm，以及模型提供方凭据。
+前置条件：Node.js `^22.19` 或 `>=24`，以及模型提供方凭据。
+
+```sh
+export DEEPSEEK_API_KEY="your-key"
+npx --yes deepseek-harness-tui@latest
+```
+
+当前目录会成为 workspace。npx launcher 会转发全部 TUI 参数：
+
+```sh
+npx --yes deepseek-harness-tui@latest --cwd ../your-project
+npx --yes deepseek-harness-tui@latest --model deepseek-official/deepseek-v4-flash
+npx --yes deepseek-harness-tui@latest --resume <session-id>
+npx --yes deepseek-harness-tui@latest --theme sakura
+```
+
+全局安装方式如下：
+
+```sh
+npm install --global deepseek-harness-tui@latest
+dsh-tui --theme sakura
+```
+
+<a id="run-from-source"></a>
+
+### 从源码运行
+
+源码开发需要 pnpm：
 
 ```sh
 git clone https://github.com/liang7878/deepseek-harness-tui.git
@@ -41,15 +68,6 @@ pnpm run build
 
 export DEEPSEEK_API_KEY="your-key"
 pnpm dsh tui
-```
-
-当前目录会成为 workspace。也可显式指定其他目录或模型：
-
-```sh
-pnpm dsh tui --cwd ../your-project
-pnpm dsh tui --model deepseek-official/deepseek-v4-flash
-pnpm dsh tui --resume <session-id>
-pnpm dsh tui --theme sakura
 ```
 
 ## MaaS 服务
@@ -70,7 +88,7 @@ llm-pi-ai:
 
 ```sh
 export ARK_API_KEY="your-key"
-pnpm dsh tui --model volcengine/your-endpoint-or-model-id
+npx --yes deepseek-harness-tui@latest --model volcengine/your-endpoint-or-model-id
 ```
 
 机密只保存在环境变量或 Harness 凭据存储中；settings 仅包含凭据引用。

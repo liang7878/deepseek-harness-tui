@@ -45,13 +45,14 @@ packages/    @deepseek-ai/dsh-<pkg> workspaces at packages/<group>/<pkg>/
   examples/    demo bundles (agent-spine + CLI/ACP/JSON-RPC bins)
   support/     dev/test infrastructure
   util/        zero-dependency utilities
-python/      Python SDK and bundled runtime (see python/README.md)
-native/      @deepseek-ai/node-addon-landlock-run source of record (see native/README.md)
-examples/    Runnable cordis.yml leaves over packages/examples bundles (see examples/AGENTS.md)
+python/      Python SDK and runtime (python/README.md)
+native/      @deepseek-ai/node-addon-landlock-run source (native/README.md)
+distribution/  npx packages and deploy root
+examples/    Runnable cordis.yml leaves (examples/AGENTS.md)
 .agents/     Agent workflows and Agent Notes (`notes/`)
 docs/        architecture, generated catalogs, postmortems, cookbook (see docs/AGENTS.md)
 scripts/     repo gates and generators
-website/     VitePress projection of selected bilingual docs/ sources
+website/     VitePress bilingual-doc projection
 ```
 
 Package groups: [packages/README.md](packages/README.md).
@@ -97,7 +98,7 @@ Real-API tests and demos read `DEEPSEEK_API_KEY`, optional `DEEPSEEK_BASE_URL`, 
 
 ## Conventions
 
-- Every npm package is `@deepseek-ai/dsh-<name>`; vendored packages are rescoped ([mapping](docs/rescope.md)) and `private: true`. `@deepseek-ai/cordis` is a peerDependency (+ dev) of every harness package.
+- Workspace packages use `@deepseek-ai/dsh-<name>`; vendored packages stay rescoped/private ([mapping](docs/rescope.md)). Unscoped npx manifests live under [`distribution/`](distribution/README.md). `@deepseek-ai/cordis` is a peerDependency (+ dev) of every harness package.
 - ESM everywhere (`"type": "module"`). Use package names across packages and `.ts` in local relative imports. Config subprocesses run built `lib/` under plain Node; source regressions use their declared launcher ([testing policy](docs/testing.md#test-subprocess-launch-modes)). The `dsh` CLI source launch runs through tsx's ESM-only hook (`node --import tsx/esm`); modules it reaches must stay ESM (no CJS-only exports) — Node's native TypeScript modes are unavailable across the engines range ([source-launch contract](.agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.md)). Raw/Web `cordis.yml` bare plugins must appear in their resolver manifest's `dependencies`; `verify-cordis-config` enforces it.
 - **Registrations are effects**: every contribution goes through `ctx.effect()` / `ctx.on()`; a registry's `register()` returns the disposer.
 - **Runtime invariants assert owned relationships.** Check authoritative event streams or mutable data, not service or method presence, plugin metadata or effects, or fixed pure examples. Without a plausible relationship, an explained empty companion is correct ([package invariant rules](packages/AGENTS.md)).

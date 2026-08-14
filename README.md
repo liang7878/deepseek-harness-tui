@@ -27,11 +27,38 @@ The TUI runs inside the same plugin-composed Host as the Agent, Session, tools, 
 - **Provider-flexible** — use DeepSeek, Volcengine Ark, OpenAI-compatible gateways, or any provider supported by the Harness model registry.
 - **Cross-platform** — macOS, Linux, Windows Terminal, SSH, tmux, and other VT-compatible terminals.
 
-<a id="run"></a> <a id="run-from-source"></a>
+<a id="run"></a>
 
 ## Quick start
 
-Prerequisites: Node.js `^22.19` or `>=24`, pnpm, and a model-provider credential.
+Prerequisites: Node.js `^22.19` or `>=24` and a model-provider credential.
+
+```sh
+export DEEPSEEK_API_KEY="your-key"
+npx --yes deepseek-harness-tui@latest
+```
+
+The current directory becomes the workspace. The npx launcher forwards every TUI argument:
+
+```sh
+npx --yes deepseek-harness-tui@latest --cwd ../your-project
+npx --yes deepseek-harness-tui@latest --model deepseek-official/deepseek-v4-flash
+npx --yes deepseek-harness-tui@latest --resume <session-id>
+npx --yes deepseek-harness-tui@latest --theme sakura
+```
+
+For a global installation:
+
+```sh
+npm install --global deepseek-harness-tui@latest
+dsh-tui --theme sakura
+```
+
+<a id="run-from-source"></a>
+
+### Run from source
+
+Source development requires pnpm:
 
 ```sh
 git clone https://github.com/liang7878/deepseek-harness-tui.git
@@ -41,15 +68,6 @@ pnpm run build
 
 export DEEPSEEK_API_KEY="your-key"
 pnpm dsh tui
-```
-
-The current directory becomes the workspace. Use another directory or model explicitly:
-
-```sh
-pnpm dsh tui --cwd ../your-project
-pnpm dsh tui --model deepseek-official/deepseek-v4-flash
-pnpm dsh tui --resume <session-id>
-pnpm dsh tui --theme sakura
 ```
 
 ## MaaS providers
@@ -70,7 +88,7 @@ llm-pi-ai:
 
 ```sh
 export ARK_API_KEY="your-key"
-pnpm dsh tui --model volcengine/your-endpoint-or-model-id
+npx --yes deepseek-harness-tui@latest --model volcengine/your-endpoint-or-model-id
 ```
 
 Secrets remain in the environment or the Harness credential store; settings contain only credential references.

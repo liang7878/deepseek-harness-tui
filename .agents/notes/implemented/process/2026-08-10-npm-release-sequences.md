@@ -28,6 +28,8 @@ Two hard blockers sat in the way. All 217 workspace manifests set `private: true
 
 All three publish to the `@deepseek-ai` scope on npmjs.com, and access is per sequence rather than per scope: the vendored framework and the native packages are `public`, the dsh family is `restricted` ([rationale](2026-08-13-public-vendor-and-native-sequences.md)). No publish path passes `--access`, because one flag cannot serve sequences that disagree and would override the manifest that owns the level.
 
+The fork's [unscoped npx TUI distribution](../architecture/2026-08-14-npx-tui-js-runtime-closure.md) is a separate fourth sequence outside these organization-owned families. It preserves artifact-first publication and registry-integrity retries while owning its own version and public package names.
+
 ### Versions land in the repository from a local command; CI only checks and uploads
 
 Each sequence has one bump-and-commit command: it derives the target version, writes it into the relevant manifests, runs `pnpm install --lockfile-only`, and commits the manifests with the lockfile. The published version is therefore readable from the repository. A human creates the tag after the commit merges to master; CI never writes to the repository and needs no write permission.

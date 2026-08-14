@@ -28,6 +28,8 @@ Status: implemented
 
 三组一律发到 npmjs.com 的 `@deepseek-ai` scope，且 access 按序列而非按 scope 区分：vendored 框架与 native 包是 `public`，dsh 族是 `restricted`（[理由](2026-08-13-public-vendor-and-native-sequences.md)）。没有任何发布路径传 `--access`——一个选项无法服务级别互不相同的序列，且会覆盖真正拥有该级别的 manifest。
 
+fork 的[非 scoped npx TUI 发行版](../architecture/2026-08-14-npx-tui-js-runtime-closure.md)是位于这些组织自有 family 之外的第四条独立序列。它保留 artifact-first 发布与 registry integrity 重试，同时持有独立版本和公开包名。
+
 ### 版本由本地命令写进仓库，CI 只核对与上传
 
 每条序列有一条 bump-and-commit 命令：算出目标版本，写进相关 manifest，跑 `pnpm install --lockfile-only`，再把 manifest 连 lockfile 一起 commit。发布版本因此在仓库里查得到。tag 由人工在 commit 合入 master 后打；CI 不写仓库，也不需要写权限。
