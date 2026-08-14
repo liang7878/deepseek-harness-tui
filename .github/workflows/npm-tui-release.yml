@@ -87,11 +87,13 @@ jobs:
             echo "::error::node-pty install did not generate $addon_dir/build/Makefile"
             exit 1
           }
+          node_root="$(dirname "$(dirname "$(realpath "$(command -v node)")")")"
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             -v "$PWD:$PWD" \
             -v "$HOME/.cache/node-gyp:$HOME/.cache/node-gyp:ro" \
             -v "$HOME/setup-pnpm:$HOME/setup-pnpm:ro" \
+            -v "$node_root:$node_root:ro" \
             -w "$addon_dir" \
             "$MANYLINUX_IMAGE" \
             bash -euxo pipefail -c \
