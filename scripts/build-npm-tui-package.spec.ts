@@ -4,6 +4,7 @@ import {
   generatePlatformPackageManifest,
   parseBuildArguments,
   platformTarget,
+  resolvePnpmInvocation,
   resolveSafeOutputDirectory,
   type DistributionManifest,
 } from './build-npm-tui-package.ts'
@@ -97,5 +98,13 @@ describe('npm TUI package builder', () => {
     expect(() => resolveSafeOutputDirectory('/repo', '../elsewhere')).toThrow(/refusing/)
     expect(() => resolveSafeOutputDirectory('/repo', 'distribution/generated')).toThrow(/non-generated/)
     expect(() => resolveSafeOutputDirectory('/repo', '.artifacts')).toThrow(/non-generated/)
+  })
+
+  it('runs pnpm through its JavaScript entrypoint without a command shim', () => {
+    expect(resolvePnpmInvocation('/tools/pnpm.cjs', ['run', 'build'])).toEqual({
+      command: process.execPath,
+      args: ['/tools/pnpm.cjs', 'run', 'build'],
+    })
+    expect(() => resolvePnpmInvocation(undefined, [])).toThrow(/pnpm entrypoint is unavailable/)
   })
 })

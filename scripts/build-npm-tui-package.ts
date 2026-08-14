@@ -79,8 +79,21 @@ const supportedPairs = [
   ['win32', 'x64'],
 ] as const satisfies readonly (readonly [NodeJS.Platform, PlatformTarget['arch']])[]
 
-function pnpmBin(): string {
-  return process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
+/**
+ * Resolve pnpm through the JavaScript entrypoint supplied by the invoking
+ * package script so Windows does not need to spawn a `.cmd` shim.
+ * @param entrypoint - pnpm's current JavaScript entrypoint.
+ * @param args - pnpm arguments.
+ * @returns A shell-free Node invocation.
+ */
+export function resolvePnpmInvocation(
+  entrypoint: string | undefined,
+  args: readonly string[],
+): { command: string; args: string[] } {
+  if (entrypoint === undefined || entrypoint === '') {
+    throw new Error('pnpm entrypoint is unavailable; invoke the builder through a pnpm package script.')
+  }
+  return { command: process.execPath, args: [entrypoint, ...args] }
 }
 
 /**
@@ -496,8 +509,9 @@ async function packStage(
   await rm(tarball, { force: true })
   await normalizeTimestamps(stage)
   const args = ['--silent', '--dir', stage, 'pack', '--pack-destination', output]
-  console.log(`build-npm-tui-package: ${formatCommand(pnpmBin(), args)}`)
-  capture(pnpmBin(), args, root)
+  const invocation = resolvePnpmInvocation(process.env.npm_execpath, args)
+  console.log(`build-npm-tui-package: ${formatCommand(invocation.command, invocation.args)}`)
+  capture(invocation.command, invocation.args, root)
   if (!existsSync(tarball)) throw new Error(`${name} produced no tarball at ${tarball}.`)
   await preserveTarExecutableModes(tarball, executableTarEntries)
   const digest = createHash('sha256').update(await readFile(tarball)).digest('hex')
@@ -549,14 +563,18 @@ async function buildPlatformPackage(
       + `${process.platform}-${process.arch}.`,
     )
   }
-  run(pnpmBin(), [
+  let invocation = resolvePnpmInvocation(process.env.npm_execpath, [
     'exec',
     'tsx',
     'scripts/verify-runtime-closure.ts',
     '--manifest',
     relative(root, deployManifestPath),
   ])
-  if (!skipBuild) run(pnpmBin(), ['run', 'build:lib:host'])
+  run(invocation.command, invocation.args)
+  if (!skipBuild) {
+    invocation = resolvePnpmInvocation(process.env.npm_execpath, ['run', 'build:lib:host'])
+    run(invocation.command, invocation.args)
+  }
   else console.log('build-npm-tui-package: skipping host library build (--skip-build)')
 
   const stage = join(stageRoot, target.packageName)
@@ -566,7 +584,7 @@ async function buildPlatformPackage(
   let failure: unknown
   let product: string
   try {
-    run(pnpmBin(), [
+    invocation = resolvePnpmInvocation(process.env.npm_execpath, [
       '--filter',
       deployRootPackage,
       'deploy',
@@ -578,6 +596,7 @@ async function buildPlatformPackage(
       '--config.confirmModulesPurge=false',
       runtime,
     ])
+    run(invocation.command, invocation.args)
     await restoreLegacyHoists(runtime)
     await materializeSymlinks(runtime)
     await prepareNativeRuntime(runtime, target)
@@ -602,7 +621,12 @@ async function buildPlatformPackage(
     throw error
   } finally {
     try {
-      run(pnpmBin(), ['install', '--frozen-lockfile', '--config.confirmModulesPurge=false'])
+      invocation = resolvePnpmInvocation(process.env.npm_execpath, [
+        'install',
+        '--frozen-lockfile',
+        '--config.confirmModulesPurge=false',
+      ])
+      run(invocation.command, invocation.args)
     } catch (restoreError) {
       if (failure === undefined) throw restoreError
       const message = restoreError instanceof Error ? restoreError.message : String(restoreError)
